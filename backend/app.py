@@ -11,6 +11,7 @@ from flask_cors import CORS
 
 from nlp_engine import extract_claims_from_text, clean_text, segment_sentences, detect_ai_provider, detect_language
 from file_parser import extract_text_from_pdf, extract_text_from_docx, extract_text_from_txt, extract_text_from_url
+from evidence_retrieval import retrieve_evidence_batch
 
 app = Flask(__name__)
 CORS(app)
@@ -165,6 +166,165 @@ def fetch_url():
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route('/api/verify-claims', methods=['POST'])
+def verify_claims_route():
+    """
+    POST /api/verify-claims
+
+    Request body (JSON):
+        {
+            "results": [
+                {
+                    "claim": "claim text",
+                    "evidence": [
+                        {
+                            "rank": 1,
+                            "chunk_id": "doc0_0",
+                            "source_id": "doc0",
+                            "text": "...",
+                            "similarity_score": 0.87
+                        },
+                        ...
+                    ]
+                },
+                ...
+            ]
+        }
+
+    This accepts the direct output shape from /api/retrieve-evidence so
+    the two routes can be chained without any client-side transformation.
+
+    Response (JSON):
+        {
+            "success": true,
+            "verifications": [
+                {
+                    "claim": "...",
+                    "verdict": "Supported",
+                    "fused_score": 0.812,
+                    "chunk_id": "doc0_0",
+                    "source_id": "doc0",
+                    "components": {
+                        "sem_sim": 0.87,
+                        "p_entail": 0.91,
+                        "p_neutral": 0.06,
+                        "p_contradict": 0.03,
+                        "entity_overlap": 0.75
+                    },
+                    "all_evidence_scores": [...]
+                },
+                ...
+            ],
+            "total_claims": 2
+        }
+    """
+    data = request.get_json() or {}
+    results = data.get("results", [])
+
+    if not results:
+        return jsonify({"success": False, "error": "No results provided. Expected key 'results' with retrieve-evidence output."}), 400
+    if not isinstance(results, list):
+        return jsonify({"success": False, "error": "'results' must be a list"}), 400
+
+    try:
+        from nli_verification import verify_claim_against_evidence_list
+
+        verifications = []
+        for item in results:
+            claim = item.get("claim", "")
+            evidence_list = item.get("evidence", [])
+            if not claim:
+                continue
+            verification = verify_claim_against_evidence_list(claim, evidence_list)
+            verifications.append(verification)
+
+        return jsonify({
+            "success": True,
+            "verifications": verifications,
+            "total_claims": len(verifications),
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/retrieve-evidence', methods=['POST'])
+def retrieve_evidence_route():
+    """
+    POST /api/retrieve-evidence
+
+    Request body (JSON):
+        {
+            "claims": ["claim text 1", "claim text 2", ...],
+            "source_documents": [
+                {"id": "doc0", "text": "full document text ..."},
+                ...
+            ],
+            "k": 3   (optional, default 3)
+        }
+
+    Response (JSON):
+        {
+            "success": true,
+            "results": [
+                {
+                    "claim": "claim text 1",
+                    "evidence": [
+                        {
+                            "rank": 1,
+                            "chunk_id": "doc0_0",
+                            "source_id": "doc0",
+                            "text": "...",
+                            "similarity_score": 0.871234
+                        },
+                        ...
+                    ]
+                },
+                ...
+            ],
+            "total_claims": 2,
+            "total_chunks_indexed": 14
+        }
+    """
+    data = request.get_json() or {}
+
+    claims = data.get("claims", [])
+    source_documents = data.get("source_documents", [])
+    k = int(data.get("k", 3))
+
+    if not claims:
+        return jsonify({"success": False, "error": "No claims provided"}), 400
+    if not source_documents:
+        return jsonify({"success": False, "error": "No source_documents provided"}), 400
+    if not isinstance(claims, list):
+        return jsonify({"success": False, "error": "'claims' must be a list"}), 400
+    if not isinstance(source_documents, list):
+        return jsonify({"success": False, "error": "'source_documents' must be a list"}), 400
+    if k < 1:
+        k = 3
+
+    try:
+        from evidence_retrieval import build_faiss_index, retrieve_evidence
+
+        index, chunks = build_faiss_index(source_documents)
+        total_chunks = len(chunks)
+
+        results = []
+        for claim in claims:
+            evidence = retrieve_evidence(claim, index, chunks, k=k)
+            results.append({"claim": claim, "evidence": evidence})
+
+        return jsonify({
+            "success": True,
+            "results": results,
+            "total_claims": len(claims),
+            "total_chunks_indexed": total_chunks
+        })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
