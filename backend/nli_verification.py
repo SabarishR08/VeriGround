@@ -81,7 +81,12 @@ print(
 # ---------------------------------------------------------------------------
 # spaCy pipeline — loaded once at import time
 # ---------------------------------------------------------------------------
-_nlp = spacy.load("en_core_web_sm")
+try:
+    _nlp = spacy.load("en_core_web_sm")
+except Exception as _e:
+    print(f"[nli_verification] Warning: spacy en_core_web_sm model load failed ({_e}). Using spacy.blank('en').", flush=True)
+    _nlp = spacy.blank("en")
+
 
 
 # ---------------------------------------------------------------------------
@@ -306,22 +311,11 @@ def verify_claim_evidence(
     }
 
 
-def verify_claim_against_evidence_list(
+def _verify_single_claim_against_evidence_list(
     claim: str,
     evidence_list: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """
-    Run verify_claim_evidence() over every evidence chunk returned by
-    Module 3 and select the result with the highest fused_score as the
-    claim's final verdict.
-
-    *evidence_list* is the "evidence" array from /api/retrieve-evidence:
-        [{"rank":1, "chunk_id":…, "source_id":…, "text":…,
-          "similarity_score":…}, …]
-
-    Returns the best-scoring result dict, augmented with:
-        "all_evidence_scores": [ {chunk_id, fused_score, verdict}, … ]
-    """
+    """Helper verifying a single atomic claim against the evidence list."""
     if not evidence_list:
         return {
             "claim":       claim,
@@ -357,3 +351,87 @@ def verify_claim_against_evidence_list(
         for r in results
     ]
     return best
+
+
+def verify_claim_against_evidence_list(
+    claim: str,
+    evidence_list: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """
+    Run claim verification over evidence chunks. Supports Compound Claim Decomposition:
+    1. Decomposes compound statements (e.g., 'A and B') into atomic sub-claims.
+    2. Evaluates each atomic sub-claim against the retrieved evidence list.
+    3. Aggregates atomic verdicts:
+       - All Supported -> Supported
+       - Mixed (Supported + Unsupported / Contradicted) -> Partially Supported
+       - All Unsupported -> Unsupported
+       - Contradicted without support -> Contradicted
+    """
+    from nlp_engine import decompose_compound_claim
+
+    atomic_claims = decompose_compound_claim(claim)
+
+    # Simple single-clause claim
+    if len(atomic_claims) <= 1:
+        res = _verify_single_claim_against_evidence_list(claim, evidence_list)
+        res["is_compound"] = False
+        res["sub_claim_verdicts"] = []
+        return res
+
+    # Compound claim with multiple atomic sub-claims
+    sub_results = []
+    for sub_c in atomic_claims:
+        sub_res = _verify_single_claim_against_evidence_list(sub_c, evidence_list)
+        sub_results.append(sub_res)
+
+    supported_count = sum(1 for r in sub_results if r["verdict"] == "Supported")
+    partial_count   = sum(1 for r in sub_results if r["verdict"] == "Partially Supported")
+    unsupported_count = sum(1 for r in sub_results if r["verdict"] == "Unsupported")
+    contradicted_count = sum(1 for r in sub_results if r["verdict"] == "Contradicted")
+    total_sub = len(sub_results)
+
+    # Determine aggregated verdict
+    if supported_count == total_sub:
+        overall_verdict = "Supported"
+    elif supported_count > 0 or partial_count > 0:
+        # Mixed support + unsupported / contradicted => Partially Supported!
+        overall_verdict = "Partially Supported"
+    elif contradicted_count > 0:
+        overall_verdict = "Contradicted"
+    else:
+        overall_verdict = "Unsupported"
+
+    avg_fused = round(sum(r["fused_score"] for r in sub_results) / total_sub, 6)
+    best_chunk_id = sub_results[0]["chunk_id"]
+    best_source_id = sub_results[0]["source_id"]
+
+    best_components = {
+        "sem_sim":        round(sum(r["components"]["sem_sim"] for r in sub_results) / total_sub, 6),
+        "p_entail":       round(sum(r["components"]["p_entail"] for r in sub_results) / total_sub, 6),
+        "p_neutral":      round(sum(r["components"]["p_neutral"] for r in sub_results) / total_sub, 6),
+        "p_contradict":   round(sum(r["components"]["p_contradict"] for r in sub_results) / total_sub, 6),
+        "entity_overlap": round(sum(r["components"]["entity_overlap"] for r in sub_results) / total_sub, 6),
+    }
+
+    sub_claim_verdicts = [
+        {
+            "claim":       r["claim"],
+            "verdict":     r["verdict"],
+            "fused_score": r["fused_score"],
+            "components":  r["components"]
+        }
+        for r in sub_results
+    ]
+
+    return {
+        "claim":              claim,
+        "chunk_id":           best_chunk_id,
+        "source_id":          best_source_id,
+        "verdict":            overall_verdict,
+        "fused_score":        avg_fused,
+        "is_compound":        True,
+        "components":         best_components,
+        "sub_claim_verdicts": sub_claim_verdicts,
+        "all_evidence_scores": sub_results[0].get("all_evidence_scores", [])
+    }
+

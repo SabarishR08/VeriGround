@@ -4,6 +4,8 @@ import WorkflowStepper from './components/WorkflowStepper';
 import Module1Input from './components/Module1Input';
 import Module2Extraction from './components/Module2Extraction';
 import Module3Preview from './components/Module3Preview';
+import Module4Verification from './components/Module4Verification';
+import Module5Explanation from './components/Module5Explanation';
 import SampleDataSelector from './components/SampleDataSelector';
 import ArchitectureModal from './components/ArchitectureModal';
 import { checkBackendHealth, fetchSampleDatasets, preprocessText, extractClaims } from './services/api';
@@ -12,19 +14,45 @@ export default function App() {
   const [activeStep, setActiveStep] = useState(1);
   const [backendOnline, setBackendOnline] = useState(false);
   
-  // Input & Preprocess States
+  // Theme State ('dark' | 'light')
+  const [theme, setTheme] = useState(() => localStorage.getItem('veriground_theme') || 'dark');
+
+  // Input & Preprocess States (Module 1)
   const [inputText, setInputText] = useState('');
   const [preprocessResult, setPreprocessResult] = useState(null);
   const [isPreprocessLoading, setIsPreprocessLoading] = useState(false);
 
-  // Claim Extraction States
+  // Claim Extraction States (Module 2)
   const [extractionResult, setExtractionResult] = useState(null);
   const [isExtractionLoading, setIsExtractionLoading] = useState(false);
+
+  // Evidence Retrieval States (Module 3)
+  const [retrievalResult, setRetrievalResult] = useState(null);
+
+  // NLI & Fusion Verification States (Module 4)
+  const [verificationResult, setVerificationResult] = useState(null);
+
+  // Explainable AI States (Module 5)
+  const [explanationResult, setExplanationResult] = useState(null);
 
   // Modal States
   const [samples, setSamples] = useState([]);
   const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
   const [isArchModalOpen, setIsArchModalOpen] = useState(false);
+
+  // Update theme class on body
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('veriground_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Check health & load sample on startup
   useEffect(() => {
@@ -43,7 +71,7 @@ export default function App() {
     init();
   }, []);
 
-  // Preprocess Handler
+  // Preprocess Handler (Module 1)
   const handlePreprocess = async (sourceType) => {
     if (!inputText.trim()) return;
     setIsPreprocessLoading(true);
@@ -57,7 +85,7 @@ export default function App() {
     }
   };
 
-  // Claim Extraction Handler
+  // Claim Extraction Handler (Module 2)
   const handleExtractClaims = async () => {
     const textToExtract = preprocessResult?.cleaned_text || inputText;
     if (!textToExtract.trim()) return;
@@ -78,25 +106,33 @@ export default function App() {
     setInputText(sample.text);
     setPreprocessResult(null);
     setExtractionResult(null);
+    setRetrievalResult(null);
+    setVerificationResult(null);
+    setExplanationResult(null);
     setActiveStep(1);
   };
 
-  // Clear Handler
+  // Clear / Reset Handler
   const handleClear = () => {
     setInputText('');
     setPreprocessResult(null);
     setExtractionResult(null);
+    setRetrievalResult(null);
+    setVerificationResult(null);
+    setExplanationResult(null);
     setActiveStep(1);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070B14] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className={`min-h-screen flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200 transition-colors relative ${theme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#070B14] text-slate-100'}`}>
       
       {/* Header Bar */}
       <Header
         backendOnline={backendOnline}
         onOpenArchitecture={() => setIsArchModalOpen(true)}
         onSelectSample={() => setIsSampleModalOpen(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Main Content Area */}
@@ -108,6 +144,9 @@ export default function App() {
           setActiveStep={setActiveStep}
           isPreprocessed={!!preprocessResult}
           isExtracted={!!extractionResult}
+          isRetrieved={!!retrievalResult}
+          isVerified={!!verificationResult}
+          isExplained={!!explanationResult}
         />
 
         {/* Step Views */}
@@ -137,6 +176,29 @@ export default function App() {
         {activeStep === 3 && (
           <Module3Preview
             claims={extractionResult?.claims || []}
+            onRetrievalComplete={(data) => setRetrievalResult(data)}
+            onContinueToModule4={(data) => {
+              setRetrievalResult(data);
+              setActiveStep(4);
+            }}
+          />
+        )}
+
+        {activeStep === 4 && (
+          <Module4Verification
+            retrievalData={retrievalResult}
+            onVerificationComplete={(data) => setVerificationResult(data)}
+            onContinueToModule5={(data) => {
+              setVerificationResult(data);
+              setActiveStep(5);
+            }}
+          />
+        )}
+
+        {activeStep === 5 && (
+          <Module5Explanation
+            verificationData={verificationResult}
+            retrievalData={retrievalResult}
             onReset={handleClear}
           />
         )}
@@ -144,13 +206,13 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-[#060912] py-6 text-center text-xs text-slate-500 font-mono">
+      <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 font-mono transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
             <strong>VeriGround Framework</strong> — Identifying Unsupported Claims in AI-Generated Content
           </div>
           <div>
-            Module 1 & 2 Prototype Demonstration Engine
+            End-to-End 5-Module Retrieval-Grounding Pipeline
           </div>
         </div>
       </footer>

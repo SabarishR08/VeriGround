@@ -129,45 +129,47 @@ def _fallback_explanation(
     components: dict[str, float],
 ) -> str:
     """
-    Return a deterministic template-based explanation when Ollama is
-    unreachable.  Grounded in actual component scores so it's not generic.
+    Return a context-aware natural language explanation referencing the actual
+    claim and retrieved evidence passage content.
     """
-    sem_sim      = components.get("sem_sim", 0.0)
-    p_entail     = components.get("p_entail", 0.0)
-    p_contradict = components.get("p_contradict", 0.0)
-    ent_overlap  = components.get("entity_overlap", 0.0)
+    claim_clean = claim.strip().rstrip(".")
+    evidence_clean = evidence.strip()
 
-    templates: dict[str, str] = {
-        "Supported": (
-            f"The evidence directly supports this claim, with a semantic "
-            f"similarity of {sem_sim:.2f} and entailment probability of "
-            f"{p_entail:.2f}, confirming the stated facts."
-        ),
-        "Partially Supported": (
-            f"The evidence is related to this claim (semantic similarity "
-            f"{sem_sim:.2f}) but only partially confirms it — entity overlap "
-            f"is {ent_overlap:.2f}, suggesting not all claim details appear "
-            f"in the retrieved passage."
-        ),
-        "Unsupported": (
-            f"No supporting evidence was found for this claim: semantic "
-            f"similarity with the retrieved passage is only {sem_sim:.2f}, "
-            f"and the NLI model assigns negligible entailment probability "
-            f"({p_entail:.2f})."
-        ),
-        "Contradicted": (
-            f"The evidence directly contradicts this claim: the NLI model "
-            f"assigns a contradiction probability of {p_contradict:.2f}, "
-            f"indicating the retrieved passage states the opposite of what "
-            f"the claim asserts."
-        ),
-    }
-    return templates.get(
-        verdict,
-        f"Verdict '{verdict}' assigned based on fusion score from semantic "
-        f"similarity ({sem_sim:.2f}), entailment ({p_entail:.2f}), and "
-        f"entity overlap ({ent_overlap:.2f}).",
-    )
+    # Extract clean evidence snippet if available
+    snippet = ""
+    if evidence_clean:
+        if len(evidence_clean) > 160:
+            snippet = evidence_clean[:157].rstrip() + "..."
+        else:
+            snippet = evidence_clean.rstrip(".")
+
+    if verdict == "Supported":
+        if snippet:
+            return f"The reference evidence explicitly confirms this claim, stating: \"{snippet}\"."
+        elif claim_clean:
+            formatted_claim = claim_clean[0].lower() + claim_clean[1:] if len(claim_clean) > 1 else claim_clean
+            return f"The ground truth knowledge base directly validates that {formatted_claim}."
+        else:
+            return "The retrieved reference evidence directly validates and supports the stated facts."
+
+    elif verdict == "Partially Supported":
+        if snippet:
+            return f"The evidence passage (\"{snippet}\") is semantically related, but only partially substantiates the specific details in the claim."
+        else:
+            return "The retrieved source supports the general topic, but lacks complete entity overlap to verify all details in the claim."
+
+    elif verdict == "Contradicted":
+        if snippet:
+            return f"The retrieved ground truth directly contradicts the claim, asserting: \"{snippet}\"."
+        else:
+            return "The NLI cross-encoder model identified an explicit contradiction between the claim and the reference text."
+
+    else:  # Unsupported
+        if snippet:
+            return f"The retrieved passage (\"{snippet}\") does not contain sufficient factual evidence to ground this claim."
+        else:
+            return "No factual evidence was found in the ground truth corpus to substantiate the assertion."
+
 
 
 # ---------------------------------------------------------------------------
