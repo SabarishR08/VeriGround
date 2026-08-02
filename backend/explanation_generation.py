@@ -4,15 +4,18 @@ VeriGround — Module 5: Explainable AI (Explanation Generation)
 Pipeline step 7 from Section 5 of the project plan:
 
   7. Explanation generation — pass claim, evidence, verdict, and component
-     scores to a local Ollama phi3:mini instance and return a single
+     scores to a local Ollama qwen2:1.5b instance and return a single
      human-readable sentence justifying the verdict.
 
 Design decisions
 ----------------
 - Ollama is called via its HTTP REST API (POST /api/generate), not a Python
   SDK, to keep the dependency list lean and match what's already installed.
-- phi3:mini is specified by name; the model must be pulled locally beforehand
-  (`ollama pull phi3:mini`).  It is already present on this machine.
+- qwen2:1.5b (934 MB, Q4_0) is used instead of phi3:mini (2.1 GB) because
+  warm inference is ~5-8s vs ~29s on a Ryzen 3 CPU — a meaningful difference
+  for a live demo.  Both produce accurate one-sentence explanations for this
+  constrained generation task.  The model must be pulled beforehand:
+  `ollama pull qwen2:1.5b` (already present on this machine).
 - If Ollama is unreachable (not running, wrong port, timeout), the function
   falls back to a deterministic template-based explanation built from the
   verdict label and the dominant component score.  The route never crashes.
@@ -24,13 +27,13 @@ Separation from /api/verify-claims
 -----------------------------------
 Explanation generation is intentionally a separate route (/api/explain-claim)
 rather than folded into /api/verify-claims.  Reasons:
-  1. phi3:mini inference takes ~5-25s on CPU — coupling it to every
-     verification call would make the verification route unusably slow.
+  1. qwen2:1.5b inference is ~5-8s on CPU warm — coupling it to every
+     verification call would still slow the verification route unnecessarily.
   2. The frontend can call /api/explain-claim only when a user explicitly
      requests an explanation (e.g. clicks an "Explain" button), keeping the
      main verification flow fast.
-  3. Separation makes it easy to swap the LLM (phi3:mini → gemma:2b or any
-     other Ollama model) without touching the verification logic.
+  3. Separation makes it trivial to swap the LLM without touching verification
+     logic — change OLLAMA_MODEL and nothing else needs updating.
 """
 
 from __future__ import annotations
@@ -45,10 +48,10 @@ import requests
 # Configuration
 # ---------------------------------------------------------------------------
 OLLAMA_URL     = "http://localhost:11434/api/generate"
-OLLAMA_MODEL   = "phi3:mini"
-OLLAMA_TIMEOUT = 120         # seconds — cold model load on Ryzen 3 takes ~60-90s
+OLLAMA_MODEL   = "qwen2:1.5b"
+OLLAMA_TIMEOUT = 60          # seconds — qwen2:1.5b cold load on Ryzen 3 is ~20-30s
 TEMPERATURE    = 0.2
-NUM_PREDICT    = 100         # token cap; one clear sentence is ~25-40 tokens
+NUM_PREDICT    = 60          # token cap; target ≤25 words per explanation
 
 
 # ---------------------------------------------------------------------------
@@ -93,8 +96,8 @@ def _build_prompt(
         )
     else:  # Unsupported
         signal_desc = (
-            f"low semantic similarity ({sem_sim:.2f}) between the claim and "
-            f"the retrieved evidence, with no entailment signal"
+            f"very low semantic similarity ({sem_sim:.2f}) — "
+            f"the evidence is unrelated to the claim"
         )
 
     # Keep the evidence snippet short — phi3:mini context is plenty large but
@@ -105,15 +108,13 @@ def _build_prompt(
 
     prompt = (
         f"You are a fact-verification assistant. "
-        f"A claim has been verified against a retrieved evidence chunk and "
-        f"assigned the verdict: {verdict}.\n\n"
+        f"A claim has been verified against evidence and given this verdict: {verdict}.\n\n"
         f"Claim: {claim}\n"
         f"Evidence: {evidence_snippet}\n"
-        f"Verdict: {verdict}\n"
         f"Key signal: {signal_desc}\n\n"
-        f"Write exactly one concise sentence explaining why this verdict was "
-        f"assigned, referencing both the claim content and the evidence. "
-        f"Do not start with 'The verdict is' or repeat the verdict label."
+        f"Write ONE short sentence (under 25 words) explaining why this verdict was assigned. "
+        f"Reference the claim and evidence content. "
+        f"Do not start with 'The verdict' or repeat the label word."
     )
     return prompt
 

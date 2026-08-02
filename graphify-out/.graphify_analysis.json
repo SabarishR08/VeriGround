@@ -1,0 +1,352 @@
+{
+  "communities": {
+    "0": [
+      "frontend_src_app",
+      "frontend_src_app_app",
+      "frontend_src_components_architecturemodal",
+      "frontend_src_components_architecturemodal_architecturemodal",
+      "frontend_src_components_header",
+      "frontend_src_components_header_header",
+      "frontend_src_components_module1input",
+      "frontend_src_components_module1input_module1input",
+      "frontend_src_components_module2extraction",
+      "frontend_src_components_module2extraction_module2extraction",
+      "frontend_src_components_module3preview",
+      "frontend_src_components_module3preview_module3preview",
+      "frontend_src_components_sampledataselector",
+      "frontend_src_components_sampledataselector_sampledataselector",
+      "frontend_src_components_workflowstepper",
+      "frontend_src_components_workflowstepper_workflowstepper",
+      "frontend_src_main",
+      "frontend_src_services_api",
+      "frontend_src_services_api_checkbackendhealth",
+      "frontend_src_services_api_extractclaims",
+      "frontend_src_services_api_fetchsampledatasets",
+      "frontend_src_services_api_fetchurlcontent",
+      "frontend_src_services_api_parseuploadedfile",
+      "frontend_src_services_api_preprocesstext"
+    ],
+    "1": [
+      "backend_nli_verification",
+      "backend_nli_verification_classify_verdict",
+      "backend_nli_verification_extract_entity_tokens",
+      "backend_nli_verification_fuse_score",
+      "backend_nli_verification_get_entity_overlap",
+      "backend_nli_verification_get_nli_scores",
+      "backend_nli_verification_py_any",
+      "backend_nli_verification_rationale_1",
+      "backend_nli_verification_rationale_141",
+      "backend_nli_verification_rationale_164",
+      "backend_nli_verification_rationale_189",
+      "backend_nli_verification_rationale_210",
+      "backend_nli_verification_rationale_254",
+      "backend_nli_verification_rationale_313",
+      "backend_nli_verification_rationale_92",
+      "backend_nli_verification_verify_claim_against_evidence_list",
+      "backend_nli_verification_verify_claim_evidence",
+      "backend_test_nli_verification",
+      "backend_test_nli_verification_bar",
+      "backend_test_nli_verification_rationale_1",
+      "backend_test_nli_verification_run_tests"
+    ],
+    "2": [
+      "backend_app_rationale_256",
+      "backend_app_retrieve_evidence_route",
+      "backend_evidence_retrieval",
+      "backend_evidence_retrieval_build_faiss_index",
+      "backend_evidence_retrieval_chunk_document",
+      "backend_evidence_retrieval_embed_texts",
+      "backend_evidence_retrieval_py_any",
+      "backend_evidence_retrieval_rationale_1",
+      "backend_evidence_retrieval_rationale_129",
+      "backend_evidence_retrieval_rationale_179",
+      "backend_evidence_retrieval_rationale_36",
+      "backend_evidence_retrieval_rationale_57",
+      "backend_evidence_retrieval_rationale_89",
+      "backend_evidence_retrieval_retrieve_evidence",
+      "backend_evidence_retrieval_retrieve_evidence_batch",
+      "backend_test_evidence_retrieval",
+      "backend_test_evidence_retrieval_main",
+      "backend_test_evidence_retrieval_rationale_1",
+      "indexflatip",
+      "ndarray"
+    ],
+    "3": [
+      "framer_motion",
+      "frontend_package",
+      "frontend_package_dependencies",
+      "frontend_package_dependencies_framer_motion",
+      "frontend_package_dependencies_lucide_react",
+      "frontend_package_dependencies_react",
+      "frontend_package_dependencies_react_dom",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_preview",
+      "frontend_package_type",
+      "frontend_package_version",
+      "lucide_react",
+      "react",
+      "react_dom"
+    ],
+    "4": [
+      "autoprefixer",
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_autoprefixer",
+      "frontend_package_devdependencies_postcss",
+      "frontend_package_devdependencies_tailwindcss",
+      "frontend_package_devdependencies_types_react",
+      "frontend_package_devdependencies_types_react_dom",
+      "frontend_package_devdependencies_vite",
+      "frontend_package_devdependencies_vitejs_plugin_react",
+      "postcss",
+      "tailwindcss",
+      "types_react",
+      "types_react_dom",
+      "vite",
+      "vitejs_plugin_react"
+    ],
+    "5": [
+      "backend_nlp_engine",
+      "backend_nlp_engine_classify_sentence",
+      "backend_nlp_engine_clean_text",
+      "backend_nlp_engine_detect_ai_provider",
+      "backend_nlp_engine_detect_language",
+      "backend_nlp_engine_extract_claims_from_text",
+      "backend_nlp_engine_py_any",
+      "backend_nlp_engine_rationale_116",
+      "backend_nlp_engine_rationale_288",
+      "backend_nlp_engine_rationale_32",
+      "backend_nlp_engine_rationale_57",
+      "backend_nlp_engine_rationale_79",
+      "backend_nlp_engine_rationale_87",
+      "backend_nlp_engine_segment_sentences",
+      "backend_test_eval"
+    ],
+    "6": [
+      "backend_explanation_generation",
+      "backend_explanation_generation_build_prompt",
+      "backend_explanation_generation_fallback_explanation",
+      "backend_explanation_generation_generate_explanation",
+      "backend_explanation_generation_ollama_is_reachable",
+      "backend_explanation_generation_py_any",
+      "backend_explanation_generation_rationale_1",
+      "backend_explanation_generation_rationale_132",
+      "backend_explanation_generation_rationale_179",
+      "backend_explanation_generation_rationale_198",
+      "backend_explanation_generation_rationale_67",
+      "backend_test_explanation_generation",
+      "backend_test_explanation_generation_rationale_1",
+      "backend_test_explanation_generation_run_tests"
+    ],
+    "7": [
+      "backend_app",
+      "backend_app_explain_claim_route",
+      "backend_app_extract_claims",
+      "backend_app_fetch_url",
+      "backend_app_get_samples",
+      "backend_app_health_check",
+      "backend_app_parse_file",
+      "backend_app_preprocess",
+      "backend_app_rationale_174",
+      "backend_app_rationale_333",
+      "backend_app_verify_claims_route"
+    ],
+    "8": [
+      "backend_file_parser",
+      "backend_file_parser_extract_text_from_docx",
+      "backend_file_parser_extract_text_from_pdf",
+      "backend_file_parser_extract_text_from_txt",
+      "backend_file_parser_extract_text_from_url",
+      "backend_file_parser_rationale_21",
+      "backend_file_parser_rationale_34",
+      "backend_file_parser_rationale_41",
+      "backend_file_parser_rationale_7"
+    ],
+    "9": [
+      "veriground_backend_requirements",
+      "veriground_module4_debugging_notes",
+      "veriground_readme"
+    ],
+    "10": [
+      "gemini",
+      "gemini_graphify"
+    ],
+    "11": [
+      "VeriGround_Project_Plan"
+    ],
+    "12": [
+      "frontend_index"
+    ],
+    "13": [
+      "frontend_postcss_config"
+    ],
+    "14": [
+      "frontend_tailwind_config"
+    ],
+    "15": [
+      "frontend_vite_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.15217391304347827,
+    "1": 0.1523809523809524,
+    "2": 0.15263157894736842,
+    "3": 0.1111111111111111,
+    "4": 0.13333333333333333,
+    "5": 0.2,
+    "6": 0.21978021978021978,
+    "7": 0.18181818181818182,
+    "8": 0.2222222222222222,
+    "9": 0.6666666666666666,
+    "10": 1.0,
+    "11": 1.0,
+    "12": 1.0,
+    "13": 1.0,
+    "14": 1.0,
+    "15": 1.0
+  },
+  "gods": [
+    {
+      "id": "backend_explanation_generation_generate_explanation",
+      "label": "generate_explanation()",
+      "degree": 10
+    },
+    {
+      "id": "backend_nli_verification_verify_claim_evidence",
+      "label": "verify_claim_evidence()",
+      "degree": 10
+    },
+    {
+      "id": "backend_nlp_engine_extract_claims_from_text",
+      "label": "extract_claims_from_text()",
+      "degree": 9
+    },
+    {
+      "id": "backend_evidence_retrieval_build_faiss_index",
+      "label": "build_faiss_index()",
+      "degree": 8
+    },
+    {
+      "id": "backend_evidence_retrieval_retrieve_evidence",
+      "label": "retrieve_evidence()",
+      "degree": 8
+    },
+    {
+      "id": "backend_evidence_retrieval_retrieve_evidence_batch",
+      "label": "retrieve_evidence_batch()",
+      "degree": 7
+    },
+    {
+      "id": "backend_nli_verification_verify_claim_against_evidence_list",
+      "label": "verify_claim_against_evidence_list()",
+      "degree": 6
+    },
+    {
+      "id": "backend_evidence_retrieval_embed_texts",
+      "label": "embed_texts()",
+      "degree": 5
+    },
+    {
+      "id": "backend_explanation_generation_fallback_explanation",
+      "label": "_fallback_explanation()",
+      "degree": 5
+    },
+    {
+      "id": "backend_nlp_engine_classify_sentence",
+      "label": "classify_sentence()",
+      "degree": 4
+    }
+  ],
+  "surprises": [
+    {
+      "source": "VeriGround: Claim Verification & Provenance Auditing Framework for RAG Systems",
+      "target": "VeriGround Backend — Python dependencies",
+      "source_files": [
+        "README.md",
+        "backend/requirements.txt"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "VeriGround: Claim Verification & Provenance Auditing Framework for RAG Systems",
+      "target": "Module 4 Debugging Notes — NLI + Fusion Verification",
+      "source_files": [
+        "README.md",
+        "docs/module4_debugging_notes.md"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "connects across different repos/directories"
+    },
+    {
+      "source": "verify_claims_route()",
+      "target": "verify_claim_against_evidence_list()",
+      "source_files": [
+        "backend/app.py",
+        "backend/nli_verification.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "explain_claim_route()",
+      "target": "generate_explanation()",
+      "source_files": [
+        "backend/app.py",
+        "backend/explanation_generation.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "main()",
+      "target": "retrieve_evidence_batch()",
+      "source_files": [
+        "backend/test_evidence_retrieval.py",
+        "backend/evidence_retrieval.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `main()` unexpectedly reaches hub `retrieve_evidence_batch()`"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `verify_claim_against_evidence_list()` connect `verify_claim_evidence` to `app.py`?",
+      "why": "High betweenness centrality (0.116) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `generate_explanation()` connect `generate_explanation` to `app.py`?",
+      "why": "High betweenness centrality (0.085) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `build_faiss_index()` connect `build_faiss_index` to `app.py`?",
+      "why": "High betweenness centrality (0.053) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `name`, `private`, `version` to the rest of the system?",
+      "why": "23 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `package.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `devDependencies` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
