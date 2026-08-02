@@ -12,11 +12,11 @@ The NLI model and spaCy pipeline are loaded once at module import time.
 
 Model interface note
 ---------------------
-We use transformers TextClassificationPipeline (task="text-classification") with
-cross-encoder/nli-deberta-v3-base, NOT zero-shot-classification.  The cross-encoder
-family expects a raw premise/hypothesis pair and directly returns the three NLI
-class scores — this is the correct interface for our fusion formula which needs
-genuine per-pair P(entail), P(neutral), P(contradict).
+We use AutoModelForSequenceClassification + AutoTokenizer directly with
+cross-encoder/nli-deberta-v3-base.  The model expects (evidence, claim) as a
+premise/hypothesis pair and returns logits for (contradiction, entailment, neutral).
+We do NOT use the zero-shot-classification pipeline — that interface is designed
+for label-set classification, not raw NLI premise/hypothesis scoring.
 """
 
 from __future__ import annotations

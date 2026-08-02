@@ -11,7 +11,9 @@ from flask_cors import CORS
 
 from nlp_engine import extract_claims_from_text, clean_text, segment_sentences, detect_ai_provider, detect_language
 from file_parser import extract_text_from_pdf, extract_text_from_docx, extract_text_from_txt, extract_text_from_url
-from evidence_retrieval import retrieve_evidence_batch
+# evidence_retrieval and nli_verification are imported lazily inside their
+# respective route handlers — keeps startup fast and avoids loading the 370MB
+# NLI model until the first verification request arrives.
 
 app = Flask(__name__)
 CORS(app)
@@ -321,6 +323,79 @@ def retrieve_evidence_route():
             "total_claims": len(claims),
             "total_chunks_indexed": total_chunks
         })
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/explain-claim', methods=['POST'])
+def explain_claim_route():
+    """
+    POST /api/explain-claim
+
+    Generate a one-sentence human-readable explanation for a verification
+    verdict.  Calls local Ollama phi3:mini; falls back to a template-based
+    explanation if Ollama is not running.
+
+    This route is intentionally separate from /api/verify-claims so that
+    explanation generation (5–25s on CPU) does not block the faster
+    verification pipeline.  The frontend calls this only when a user
+    explicitly requests an explanation.
+
+    Request body (JSON) — accepts the direct output shape of one item from
+    /api/verify-claims so no client-side transformation is needed:
+        {
+            "claim":      "claim text",
+            "evidence":   "best evidence chunk text",
+            "verdict":    "Supported",
+            "components": {
+                "sem_sim":        0.87,
+                "p_entail":       0.91,
+                "p_neutral":      0.06,
+                "p_contradict":   0.03,
+                "entity_overlap": 0.75
+            },
+            "model": "phi3:mini"   (optional, default phi3:mini)
+        }
+
+    Response (JSON):
+        {
+            "success":          true,
+            "explanation":      "The evidence directly states...",
+            "source":           "ollama",
+            "model":            "phi3:mini",
+            "ollama_available": true
+        }
+    """
+    data = request.get_json() or {}
+
+    claim      = data.get("claim", "").strip()
+    evidence   = data.get("evidence", "").strip()
+    verdict    = data.get("verdict", "").strip()
+    components = data.get("components", {})
+    model      = data.get("model", "phi3:mini")
+
+    if not claim:
+        return jsonify({"success": False, "error": "Missing required field: 'claim'"}), 400
+    if not verdict:
+        return jsonify({"success": False, "error": "Missing required field: 'verdict'"}), 400
+    if verdict not in ("Supported", "Partially Supported", "Unsupported", "Contradicted"):
+        return jsonify({
+            "success": False,
+            "error": f"Invalid verdict '{verdict}'. Must be one of: Supported, Partially Supported, Unsupported, Contradicted"
+        }), 400
+
+    try:
+        from explanation_generation import generate_explanation
+
+        result = generate_explanation(
+            claim=claim,
+            evidence=evidence,
+            verdict=verdict,
+            components=components,
+            model=model,
+        )
+        return jsonify({"success": True, **result})
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
