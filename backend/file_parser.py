@@ -4,15 +4,19 @@ import requests
 from bs4 import BeautifulSoup
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
-    """Extract text from PDF file bytes using PyPDF2."""
+    """Extract text from PDF file bytes using PyPDF2 or pypdf."""
     try:
-        import PyPDF2
-        reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
+        try:
+            import PyPDF2 as pdf_lib
+        except ImportError:
+            import pypdf as pdf_lib
+            
+        reader = pdf_lib.PdfReader(io.BytesIO(file_bytes))
         text_pages = []
         for page in reader.pages:
             extracted = page.extract_text()
             if extracted:
-                text_pages.append(extracted)
+                text_pages.append(extracted.strip())
         return "\n".join(text_pages)
     except Exception as e:
         raise ValueError(f"Error parsing PDF file: {str(e)}")

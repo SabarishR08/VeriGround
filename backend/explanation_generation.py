@@ -59,7 +59,7 @@ def _build_prompt(
     claim: str,
     evidence: str,
     verdict: str,
-    components: dict[str, float],
+    components: dict[str, float] | None,
 ) -> str:
     """
     Build a focused, grounded prompt for phi3:mini.
@@ -68,6 +68,7 @@ def _build_prompt(
     component signal so the model's explanation is anchored in real numbers
     rather than generic hedging.
     """
+    components = components or {}
     # Identify the dominant signal for the prompt context
     sem_sim      = components.get("sem_sim", 0.0)
     p_entail     = components.get("p_entail", 0.0)

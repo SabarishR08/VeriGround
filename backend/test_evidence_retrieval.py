@@ -100,7 +100,7 @@ def main() -> None:
             )
             print(f"  Score: {score:.4f}  [{bar:<40}]")
             # Print first 120 chars of the chunk text
-            snippet = ev["text"][:120].replace("\n", " ")
+            snippet = ev["text"][:120].replace("\n", " ").encode("ascii", "ignore").decode("ascii")
             print(f"  Text : {snippet}...")
             print()
 

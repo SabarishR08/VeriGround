@@ -116,10 +116,10 @@ TEST_CASES = [
 # ─────────────────────────────────────────────────────────────────────────────
 
 VERDICT_ICON = {
-    "Supported":           "✅",
-    "Partially Supported": "🟡",
-    "Unsupported":         "⬜",
-    "Contradicted":        "❌",
+    "Supported":           "[+] ",
+    "Partially Supported": "[~] ",
+    "Unsupported":         "[?] ",
+    "Contradicted":        "[x] ",
 }
 
 COMPONENT_BAR_WIDTH = 36
@@ -132,12 +132,12 @@ def bar(value: float, width: int = COMPONENT_BAR_WIDTH) -> str:
 
 def run_tests() -> None:
     print("=" * 72)
-    print("VeriGround — Module 4: NLI + Fusion Verification Test")
-    print(f"Fusion weights: α={ALPHA} β={BETA} γ={GAMMA} δ={DELTA}")
+    print("VeriGround -- Module 4: NLI + Fusion Verification Test")
+    print(f"Fusion weights: alpha={ALPHA} beta={BETA} gamma={GAMMA} delta={DELTA}")
     print(
-        f"Thresholds: Supported≥{THRESHOLD_SUPPORTED}  "
-        f"Partial≥{THRESHOLD_PARTIAL_LO}  "
-        f"Unsupported≥{THRESHOLD_UNSUPPORTED}  "
+        f"Thresholds: Supported>={THRESHOLD_SUPPORTED}  "
+        f"Partial>={THRESHOLD_PARTIAL_LO}  "
+        f"Unsupported>={THRESHOLD_UNSUPPORTED}  "
         f"Contradict-dominance>{CONTRADICT_DOMINANCE}"
     )
     print("=" * 72)
@@ -178,19 +178,19 @@ def run_tests() -> None:
         # Component breakdown
         print(f"  {'Component':<18} {'Score':>7}  Visual")
         print(f"  {'-'*18}  {'-'*7}  {'-'*COMPONENT_BAR_WIDTH}")
-        print(f"  {'SemSim (α='+str(ALPHA)+')':<18}  {c['sem_sim']:>6.4f}  {bar(c['sem_sim'])}")
-        print(f"  {'P(entail) (β='+str(BETA)+')':<18}  {c['p_entail']:>6.4f}  {bar(c['p_entail'])}")
+        print(f"  {'SemSim (alpha='+str(ALPHA)+')':<18}  {c['sem_sim']:>6.4f}  {bar(c['sem_sim'])}")
+        print(f"  {'P(entail) (beta='+str(BETA)+')':<18}  {c['p_entail']:>6.4f}  {bar(c['p_entail'])}")
         print(f"  {'P(neutral)':<18}  {c['p_neutral']:>6.4f}  {bar(c['p_neutral'])}")
-        print(f"  {'P(contradict)(γ)':<18}  {c['p_contradict']:>6.4f}  {bar(c['p_contradict'])}")
-        print(f"  {'EntityOverlap(δ)':<18}  {c['entity_overlap']:>6.4f}  {bar(c['entity_overlap'])}")
+        print(f"  {'P(contradict)(gamma)':<18}  {c['p_contradict']:>6.4f}  {bar(c['p_contradict'])}")
+        print(f"  {'EntityOverlap(delta)':<18}  {c['entity_overlap']:>6.4f}  {bar(c['entity_overlap'])}")
         print()
 
         # Formula trace
         weighted = (
-            f"  {ALPHA}×{c['sem_sim']:.4f}"
-            f" + {BETA}×{c['p_entail']:.4f}"
-            f" − {GAMMA}×{c['p_contradict']:.4f}"
-            f" + {DELTA}×{c['entity_overlap']:.4f}"
+            f"  {ALPHA}*{c['sem_sim']:.4f}"
+            f" + {BETA}*{c['p_entail']:.4f}"
+            f" - {GAMMA}*{c['p_contradict']:.4f}"
+            f" + {DELTA}*{c['entity_overlap']:.4f}"
         )
         print(f"  Fusion formula:")
         print(f"    {weighted}")
@@ -198,13 +198,13 @@ def run_tests() -> None:
 
         if c["p_contradict"] > CONTRADICT_DOMINANCE:
             print(
-                f"    ⚠ Contradiction dominance triggered: "
+                f"    [!] Contradiction dominance triggered: "
                 f"P(contradict)={c['p_contradict']:.4f} > {CONTRADICT_DOMINANCE}"
             )
         if c["sem_sim"] < 0.15:
             print(
-                f"    ⚠ Off-topic gate triggered: "
-                f"SemSim={c['sem_sim']:.4f} < 0.15 → forced Unsupported"
+                f"    [!] Off-topic gate triggered: "
+                f"SemSim={c['sem_sim']:.4f} < 0.15 -> forced Unsupported"
             )
 
         print()

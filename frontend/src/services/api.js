@@ -123,6 +123,7 @@ export async function extractClaims(text) {
     "Greeting": 0
   };
 
+
   const questionStarters = ["who", "what", "when", "where", "why", "how", "can", "could", "should", "would", "will", "is", "are", "do", "does", "did"];
   const commandTriggers = ["please", "verify", "open", "summarize", "generate", "click", "check"];
   const opinionPhrases = ["i think", "i believe", "in my opinion", "we believe", "our team believes", "many people think", "it seems", "i feel", "most beautiful", "coolest", "amazing"];
@@ -283,7 +284,7 @@ export async function fetchUrlContent(url) {
  * Module 3: Evidence Retrieval API Call
  * POST /api/retrieve-evidence
  */
-export async function retrieveEvidence(claimsList, sourceDocuments, k = 3) {
+export async function retrieveEvidence(claimsList, sourceDocuments, k = 3, autoFetch = false) {
   const claimsArray = claimsList.map(c => typeof c === 'string' ? c : c.text);
   
   try {
@@ -293,7 +294,8 @@ export async function retrieveEvidence(claimsList, sourceDocuments, k = 3) {
       body: JSON.stringify({
         claims: claimsArray,
         source_documents: sourceDocuments,
-        k: k
+        k: k,
+        auto_fetch: autoFetch
       })
     });
     if (res.ok) {

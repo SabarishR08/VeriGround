@@ -14,8 +14,8 @@ export default function App() {
   const [activeStep, setActiveStep] = useState(1);
   const [backendOnline, setBackendOnline] = useState(false);
   
-  // Theme State ('dark' | 'light')
-  const [theme, setTheme] = useState(() => localStorage.getItem('veriground_theme') || 'dark');
+  // Theme State ('dark' | 'light') — Default: Theme 1 Modern IEEE Research Paper Style ('light')
+  const [theme, setTheme] = useState(() => localStorage.getItem('veriground_theme') || 'light');
 
   // Input & Preprocess States (Module 1)
   const [inputText, setInputText] = useState('');
@@ -124,15 +124,13 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200 transition-colors relative ${theme === 'light' ? 'bg-[#F8FAFC] text-slate-900' : 'bg-[#070B14] text-slate-100'}`}>
+    <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500/20 selection:text-blue-700 bg-white text-[#202124] relative">
       
       {/* Header Bar */}
       <Header
         backendOnline={backendOnline}
         onOpenArchitecture={() => setIsArchModalOpen(true)}
         onSelectSample={() => setIsSampleModalOpen(true)}
-        theme={theme}
-        onToggleTheme={toggleTheme}
       />
 
       {/* Main Content Area */}

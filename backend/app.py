@@ -22,7 +22,7 @@ SAMPLE_DATASETS = [
     {
         "id": "academic-strict-benchmark",
         "title": "VeriGround Research Evaluation Suite (Strict Benchmark)",
-        "description": "10-sentence academic benchmark suite testing Claims, Opinions, Questions, Predictions, Greetings, and Commands.",
+        "description": "10-sentence academic benchmark suite testing Claims, Opinions, Questions, Predictions, Greetings, and Commands with ground-truth reference evidence.",
         "text": """The Eiffel Tower is located in Paris.
 
 I think Paris is the most beautiful city in the world.
@@ -41,7 +41,29 @@ Our team believes VeriGround is an innovative framework.
 
 The capital of Japan is Tokyo.
 
-Please verify these claims."""
+Please verify these claims.""",
+        "source_documents": [
+            {
+                "id": "doc_eiffel",
+                "title": "Wikipedia Reference: Eiffel Tower",
+                "text": "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. Constructed between 1887 and 1889 as the entrance to the 1889 World's Fair, it was named after the engineer Gustave Eiffel, whose company designed and built the tower."
+            },
+            {
+                "id": "doc_gpt4",
+                "title": "Wikipedia Reference: GPT-4",
+                "text": "Generative Pre-trained Transformer 4 (GPT-4) is a multimodal large language model created by OpenAI. OpenAI officially released GPT-4 in March 2023, making it available to ChatGPT Plus subscribers and via OpenAI's commercial API."
+            },
+            {
+                "id": "doc_water",
+                "title": "Physics Reference: Thermodynamics of Water",
+                "text": "Water boils at 100 degrees Celsius (212 degrees Fahrenheit) under standard atmospheric pressure of 1 atmosphere (101.325 kPa). The boiling point decreases at higher altitudes where atmospheric pressure is lower."
+            },
+            {
+                "id": "doc_japan",
+                "title": "Geography Reference: Japan",
+                "text": "Tokyo is the capital and most populous city of Japan. Located at the head of Tokyo Bay, the Greater Tokyo Area is the most populous metropolitan area in the world."
+            }
+        ]
     },
     {
         "id": "sample-ai-history",
@@ -55,7 +77,24 @@ Machine learning is absolutely amazing and every developer must use it today.
 
 Can quantum computing solve artificial general intelligence by next year?
 
-Python is the most pleasant programming language in human history."""
+Python is the most pleasant programming language in human history.""",
+        "source_documents": [
+            {
+                "id": "doc_ai_history",
+                "title": "Computer Science History: Artificial Intelligence",
+                "text": "Artificial Intelligence as an academic discipline was founded at a workshop on the campus of Dartmouth College in 1955, organized by John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon."
+            },
+            {
+                "id": "doc_alphago",
+                "title": "DeepMind Research: AlphaGo",
+                "text": "DeepMind developed AlphaGo, a computer program that defeated world champion Go player Lee Sedol 4 games to 1 in March 2016."
+            },
+            {
+                "id": "doc_python",
+                "title": "Programming Languages: Python History",
+                "text": "Python was created by Guido van Rossum and first released in 1991 as a successor to the ABC programming language."
+            }
+        ]
     }
 ]
 
@@ -293,35 +332,41 @@ def retrieve_evidence_route():
 
     claims = data.get("claims", [])
     source_documents = data.get("source_documents", [])
+    auto_fetch = bool(data.get("auto_fetch", True))
     k = int(data.get("k", 3))
 
     if not claims:
         return jsonify({"success": False, "error": "No claims provided"}), 400
-    if not source_documents:
-        return jsonify({"success": False, "error": "No source_documents provided"}), 400
     if not isinstance(claims, list):
         return jsonify({"success": False, "error": "'claims' must be a list"}), 400
-    if not isinstance(source_documents, list):
-        return jsonify({"success": False, "error": "'source_documents' must be a list"}), 400
     if k < 1:
         k = 3
 
     try:
-        from evidence_retrieval import build_faiss_index, retrieve_evidence
+        from evidence_retrieval import build_faiss_index, retrieve_evidence, fetch_reference_documents_for_claims
 
-        index, chunks = build_faiss_index(source_documents)
+        docs_to_index = list(source_documents) if source_documents else []
+
+        # Automatically fetch reference documents if requested or if no source_documents were provided
+        if auto_fetch or not docs_to_index:
+            auto_docs = fetch_reference_documents_for_claims(claims)
+            docs_to_index.extend(auto_docs)
+
+        index, chunks = build_faiss_index(docs_to_index)
         total_chunks = len(chunks)
 
         results = []
-        for claim in claims:
-            evidence = retrieve_evidence(claim, index, chunks, k=k)
-            results.append({"claim": claim, "evidence": evidence})
+        for claim_item in claims:
+            claim_str = claim_item.get("text", str(claim_item)) if isinstance(claim_item, dict) else str(claim_item)
+            evidence = retrieve_evidence(claim_str, index, chunks, k=k)
+            results.append({"claim": claim_str, "evidence": evidence})
 
         return jsonify({
             "success": True,
             "results": results,
             "total_claims": len(claims),
-            "total_chunks_indexed": total_chunks
+            "total_chunks_indexed": total_chunks,
+            "auto_fetched_sources_count": len(docs_to_index) - len(source_documents) if source_documents else len(docs_to_index)
         })
 
     except Exception as e:
