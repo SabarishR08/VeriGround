@@ -1,18 +1,18 @@
 import React from 'react';
-import { X, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function SampleDataSelector({ isOpen, onClose, samples, onSelectSample }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-panel w-full max-w-2xl rounded-2xl border border-cyan-500/40 shadow-glow-cyan p-6 space-y-6 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-fadeIn">
+      <div className="w-full max-w-2xl rounded-2xl border border-gray-200 bg-white shadow-sm p-6 space-y-6 relative">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-cyan-400" />
+            <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-primary" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">Select Academic Benchmark Suite</h3>

@@ -6,7 +6,7 @@ export default function ArchitectureModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
-      <div className="glass-panel w-full max-w-3xl rounded-2xl border border-indigo-500/40 shadow-glow-violet p-6 space-y-6 relative overflow-y-auto max-h-[90vh]">
+      <div className="w-full max-w-3xl rounded-2xl border border-gray-200 p-6 space-y-6 relative overflow-y-auto max-h-[90vh] bg-white shadow-sm">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -15,7 +15,7 @@ export default function ArchitectureModal({ isOpen, onClose }) {
               <Layers className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">VeriGround Framework Architecture</h3>
+              <h3 className="text-lg font-semibold text-gray-900">VeriGround Framework Architecture</h3>
               <p className="text-xs text-slate-400">Retrieval-Grounding Verification Pipeline Flow</p>
             </div>
           </div>
@@ -31,11 +31,11 @@ export default function ArchitectureModal({ isOpen, onClose }) {
         <div className="space-y-6 py-2">
           
           {/* Module 1 Block */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/40 shadow-glow-cyan text-center space-y-2 relative">
-            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-extrabold uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-white border border-gray-100 text-center space-y-2 relative">
+            <span className="px-2.5 py-0.5 rounded-full bg-cyan-50 text-primary text-[10px] font-semibold uppercase tracking-wider">
               MODULE 1
             </span>
-            <h4 className="text-base font-extrabold text-white">AI Content Input Module</h4>
+            <h4 className="text-base font-semibold text-gray-900">AI Content Input Module</h4>
             <p className="text-xs text-slate-400">
               Input Sources: ChatGPT, Gemini, Claude, Copilot, DeepSeek, PDF, DOCX, TXT, or Website URL
             </p>
@@ -52,11 +52,11 @@ export default function ArchitectureModal({ isOpen, onClose }) {
           </div>
 
           {/* Module 2 Block */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-indigo-500/40 shadow-glow-violet text-center space-y-2 relative">
-            <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-extrabold uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-white border border-gray-100 text-center space-y-2 relative">
+            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-primary text-[10px] font-semibold uppercase tracking-wider">
               MODULE 2
             </span>
-            <h4 className="text-base font-extrabold text-white">Intelligent Claim Extraction</h4>
+            <h4 className="text-base font-semibold text-gray-900">Intelligent Claim Extraction</h4>
             <p className="text-xs text-slate-400">
               NLP Engine: Evaluates linguistic indicators to isolate factual assertions from non-verifiable opinions
             </p>
@@ -73,11 +73,11 @@ export default function ArchitectureModal({ isOpen, onClose }) {
           </div>
 
           {/* Module 3 Block */}
-          <div className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-glow-emerald text-center space-y-2 relative">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold uppercase tracking-wider">
+          <div className="p-4 rounded-xl bg-white border border-gray-100 text-center space-y-2 relative">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-success text-[10px] font-semibold uppercase tracking-wider">
               MODULE 3
             </span>
-            <h4 className="text-base font-extrabold text-white">Semantic Grounding & Verification</h4>
+            <h4 className="text-base font-semibold text-gray-900">Semantic Grounding & Verification</h4>
             <p className="text-xs text-slate-400">
               Embedding Generation & Retrieval: Compares vector representations against external ground-truth datasets
             </p>

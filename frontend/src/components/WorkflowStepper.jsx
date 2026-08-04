@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Cpu, Database, ShieldCheck, Sparkles, CheckCircle2, ArrowRight, Activity } from 'lucide-react';
+import { FileText, Cpu, Database, ShieldCheck, CheckCircle2, ArrowRight, Activity } from 'lucide-react';
 
 export default function WorkflowStepper({ activeStep, setActiveStep, isPreprocessed, isExtracted, isRetrieved, isVerified, isExplained, currentStage }) {
   const steps = [
@@ -40,14 +40,14 @@ export default function WorkflowStepper({ activeStep, setActiveStep, isPreproces
       title: "Module 5",
       subtitle: "Explainable AI",
       description: "Ollama justification",
-      icon: Sparkles,
+    icon: Activity,
       completed: isExplained,
     }
   ];
 
   return (
     <div className="w-full max-w-7xl mx-auto mb-8">
-      <div className="glass-panel rounded-2xl p-4 sm:p-6 border border-slate-800 shadow-xl">
+      <div className="rounded-2xl p-4 sm:p-6 border border-gray-200 shadow-sm bg-white">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative">
           
           {steps.map((step, idx) => {
@@ -68,16 +68,16 @@ export default function WorkflowStepper({ activeStep, setActiveStep, isPreproces
                   isSelectable ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'
                 } ${
                   isActive
-                    ? 'bg-gradient-to-r from-cyan-950/60 to-slate-900/90 border border-cyan-500/50 shadow-glow-cyan'
+                    ? 'bg-primary/10 border border-primary/20 shadow-sm'
                     : isDone
-                    ? 'bg-slate-900/60 border border-emerald-500/30'
-                    : 'bg-slate-900/30 border border-slate-800/80'
+                    ? 'bg-white border border-gray-100'
+                    : 'bg-white border border-gray-100'
                 }`}
               >
                 <div className="flex items-center space-x-3 mb-2">
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-all ${
                     isActive
-                      ? 'bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/30'
+                      ? 'bg-primary text-white shadow-sm'
                       : isDone
                       ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                       : 'bg-slate-800 text-slate-400 border border-slate-700'

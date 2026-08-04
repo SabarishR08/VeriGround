@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Database, Search, CheckCircle, ShieldAlert, Zap, Layers, Server, Sparkles } from 'lucide-react';
+import { Database, Search, CheckCircle, ShieldAlert, Zap, Layers, Server } from 'lucide-react';
 
 export default function Module3Preview({ claims, onReset }) {
   const [retrieving, setRetrieving] = useState(false);
@@ -29,14 +29,13 @@ export default function Module3Preview({ claims, onReset }) {
     <div className="w-full max-w-7xl mx-auto space-y-8 animate-fadeIn">
       
       {/* Title Header Card */}
-      <div className="text-center py-6 glass-panel rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-48 h-48 bg-teal-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl"></div>
+      <div className="text-center py-6 rounded-2xl border border-gray-200 bg-white shadow-sm relative overflow-hidden">
+        
 
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold uppercase tracking-wider mb-2">
           Module 3 Pipeline Readiness
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
           Semantic Claim Understanding & Evidence Retrieval
         </h2>
         <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
@@ -62,7 +61,7 @@ export default function Module3Preview({ claims, onReset }) {
           <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
             {claims && claims.length > 0 ? (
               claims.map((c, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-[#0B1120] border border-slate-800 space-y-2">
+                <div key={idx} className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-2">
                   <div className="flex justify-between items-center text-xs">
                     <span className="font-bold text-cyan-400 font-mono">Claim #{idx + 1}</span>
                     <span className="text-slate-500 font-mono">Dense Vector [768d]</span>
@@ -83,7 +82,7 @@ export default function Module3Preview({ claims, onReset }) {
             type="button"
             onClick={simulateRetrieval}
             disabled={retrieving || !claims || claims.length === 0}
-            className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 font-extrabold text-sm shadow-glow-cyan transition-all cursor-pointer"
+            className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-sm transition-all cursor-pointer"
           >
             {retrieving ? (
               <>
@@ -116,7 +115,7 @@ export default function Module3Preview({ claims, onReset }) {
           {retrievedClaims ? (
             <div className="space-y-4 max-h-96 overflow-y-auto pr-1 animate-fadeIn">
               {retrievedClaims.map((item, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/40 shadow-glow-emerald space-y-3">
+                <div key={idx} className="p-4 rounded-xl bg-white border border-gray-100 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-bold text-emerald-400 flex items-center space-x-1.5">
                       <CheckCircle className="w-4 h-4" />
