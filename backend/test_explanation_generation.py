@@ -110,7 +110,7 @@ VERDICT_ICON = {
 def run_tests() -> None:
     print("=" * 72)
     print("VeriGround — Module 5: Explanation Generation Test")
-    print(f"Model: phi3:mini via Ollama (localhost:11434)")
+    print(f"Model: qwen2:1.5b via Ollama (localhost:11434)")
     print("=" * 72)
 
     all_results = []
