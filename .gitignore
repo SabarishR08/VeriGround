@@ -2,5 +2,6 @@ node_modules/
 frontend/dist/
 frontend/node_modules/
 backend/__pycache__/
+backend/provenance.db
 *.pyc
 .env

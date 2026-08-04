@@ -17,6 +17,7 @@ from provenance_store import (
     get_provenance_log,
     get_claim_by_id,
     get_provenance_stats,
+    update_explanation,
 )
 
 
@@ -74,7 +75,22 @@ class TestProvenanceStore(unittest.TestCase):
         self.assertGreaterEqual(stats["total"], 3)
         self.assertIn("Supported", stats["by_verdict"])
 
+    def test_update_explanation_preserves_existing_fields(self):
+        claim = "New claim for explanation update."
+        claim_id = log_verification(
+            claim_text=claim,
+            verdict="Unsupported",
+            fused_score=0.03,
+            explanation="Initial placeholder explanation.",
+        )
+        update_explanation(claim_id, "Updated explanation text.")
 
+        retrieved = get_claim_by_id(claim_id)
+        self.assertIsNotNone(retrieved)
+        self.assertEqual(retrieved["claim_text"], claim)
+        self.assertEqual(retrieved["explanation"], "Updated explanation text.")
+ 
+ 
 if __name__ == "__main__":
     print("=" * 70)
     print("VeriGround — Module 6: Provenance Store Test")

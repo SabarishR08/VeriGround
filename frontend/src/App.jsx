@@ -104,7 +104,7 @@ export default function App() {
       const docText = preprocessResult?.cleaned_text || inputText;
       const sourceDocs = [{ id: "source_doc_main", text: docText }];
       
-      const retRes = await retrieveEvidence(extractedClaims, sourceDocs, 3);
+      const retRes = await retrieveEvidence(extractedClaims, sourceDocs, 5);
       setRetrievalResult(retRes);
 
       // 2. Module 4: NLI & Fusion Verification

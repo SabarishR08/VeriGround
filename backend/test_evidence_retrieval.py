@@ -12,7 +12,7 @@ higher (e.g. > 0.5) than unrelated pairs (< 0.3).
 """
 
 import json
-from evidence_retrieval import retrieve_evidence_batch
+from evidence_retrieval import chunk_document, retrieve_evidence_batch
 
 # ---------------------------------------------------------------------------
 # Sample source documents  (two short Wikipedia-style paragraphs each)
@@ -57,6 +57,15 @@ SOURCE_DOCUMENTS = [
             "called boiling-point elevation, a colligative property of solutions."
         ),
     },
+    {
+        "id": "doc_japan",
+        "text": (
+            "Tokyo is the capital of Japan and one of the largest metropolitan areas in the world. "
+            "It has been the political and economic center of Japan since the 19th century.\n\n"
+            "The capital city hosts the Imperial Palace, the National Diet Building, and many government offices. "
+            "Tokyo is located on the eastern coast of Honshu and serves as Japan's primary cultural hub."
+        ),
+    },
 ]
 
 # ---------------------------------------------------------------------------
@@ -66,6 +75,7 @@ CLAIMS = [
     "The Eiffel Tower was built in 1889 and is located in Paris.",
     "AlphaGo defeated Lee Sedol in 2016.",
     "Water boils at 100 degrees Celsius at standard atmospheric pressure.",
+    "The capital of Japan is Tokyo.",
 ]
 
 # ---------------------------------------------------------------------------
@@ -78,7 +88,7 @@ def main() -> None:
     print(f"Claims: {len(CLAIMS)}  |  Source docs: {len(SOURCE_DOCUMENTS)}")
     print("=" * 70)
 
-    results = retrieve_evidence_batch(CLAIMS, SOURCE_DOCUMENTS, k=3)
+    results = retrieve_evidence_batch(CLAIMS, SOURCE_DOCUMENTS, k=5)
 
     for item in results:
         claim = item["claim"]
@@ -121,6 +131,30 @@ def main() -> None:
     ]
     print(json.dumps(summary, indent=2))
     print("=" * 70)
+
+
+def test_chunk_document_splits_long_documents():
+    chunks = chunk_document(SOURCE_DOCUMENTS[2]["text"], "doc_water")
+    assert len(chunks) >= 2
+    assert any("100 degrees Celsius" in c["text"] for c in chunks)
+
+
+def test_water_claim_retrieves_boiling_point_evidence():
+    results = retrieve_evidence_batch([CLAIMS[2]], SOURCE_DOCUMENTS, k=5)
+    assert len(results) == 1
+    evidence = results[0]["evidence"]
+    assert evidence, "Expected evidence for the water claim"
+    assert evidence[0]["source_id"] == "doc_water"
+    assert "100 degrees Celsius" in evidence[0]["text"] or "100°C" in evidence[0]["text"]
+
+
+def test_japan_claim_retrieves_tokyo_evidence():
+    results = retrieve_evidence_batch([CLAIMS[3]], SOURCE_DOCUMENTS, k=5)
+    assert len(results) == 1
+    evidence = results[0]["evidence"]
+    assert evidence, "Expected evidence for the Japan claim"
+    assert evidence[0]["source_id"] == "doc_japan"
+    assert "capital of Japan" in evidence[0]["text"] or "Tokyo" in evidence[0]["text"]
 
 
 if __name__ == "__main__":

@@ -244,12 +244,16 @@ def classify_verdict(fused_score: float, p_contradict: float, sem_sim: float = 1
 # 5. Per-pair verification entry point
 # ---------------------------------------------------------------------------
 
+from evidence_retrieval import select_most_similar_sentence
+
+
 def verify_claim_evidence(
     claim: str,
     evidence_text: str,
     sem_sim: float,
     chunk_id: str = "",
     source_id: str = "",
+    evidence: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Run the full Module 4 pipeline for a single claim/evidence pair.
@@ -280,17 +284,32 @@ def verify_claim_evidence(
         }
     }
     """
-    nli = get_nli_scores(claim, evidence_text)
-    p_entail    = nli["entailment"]
-    p_neutral   = nli["neutral"]
+    # Prefer the most relevant single sentence for NLI if available (reduces noise)
+    nli_input = evidence_text
+    if evidence and isinstance(evidence, dict):
+        if evidence.get("best_sentence"):
+            nli_input = evidence["best_sentence"]
+        else:
+            # Fallback: attempt to extract the best sentence heuristically
+            try:
+                best_sent, _ = select_most_similar_sentence(claim, evidence_text)
+                if best_sent:
+                    nli_input = best_sent
+            except Exception:
+                pass
+
+    nli = get_nli_scores(claim, nli_input)
+    p_entail = nli["entailment"]
+    p_neutral = nli["neutral"]
     p_contradict = nli["contradiction"]
 
-    entity_overlap = get_entity_overlap(claim, evidence_text)
+    # Compute entity overlap on the more informative text (claim vs best sentence)
+    entity_overlap = get_entity_overlap(claim, nli_input)
 
     score = fuse_score(sem_sim, p_entail, p_contradict, entity_overlap)
     verdict = classify_verdict(score, p_contradict, sem_sim=sem_sim)
 
-    return {
+    output = {
         "claim":       claim,
         "chunk_id":    chunk_id,
         "source_id":   source_id,
@@ -304,6 +323,11 @@ def verify_claim_evidence(
             "entity_overlap": entity_overlap,
         },
     }
+
+    if evidence is not None:
+        output["matched_evidence"] = evidence
+
+    return output
 
 
 def verify_claim_against_evidence_list(
@@ -344,6 +368,7 @@ def verify_claim_against_evidence_list(
             sem_sim=ev.get("similarity_score", 0.0),
             chunk_id=ev.get("chunk_id", ""),
             source_id=ev.get("source_id", ""),
+            evidence=ev,
         )
         results.append(res)
 

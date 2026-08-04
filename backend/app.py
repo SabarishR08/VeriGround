@@ -16,7 +16,13 @@ from file_parser import extract_text_from_pdf, extract_text_from_docx, extract_t
 # are imported lazily inside their route handlers — keeps startup fast and
 # avoids loading ~400MB of model weights until the first request arrives.
 # provenance_store is lightweight (stdlib sqlite3) so it's imported at top level.
-from provenance_store import log_verification, get_provenance_log, get_provenance_stats
+from provenance_store import (
+    log_verification,
+    get_provenance_log,
+    get_provenance_stats,
+    get_most_recent_claim_id_by_text,
+    update_explanation,
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -256,11 +262,11 @@ def verify_claims_route():
                 continue
             v = verify_claim_against_evidence_list(claim, evidence_list)
             verifications.append(v)
-
+ 
             # Module 6 — log to provenance store (fire-and-forget; don't fail
             # the route if logging has an error)
             try:
-                log_verification(
+                claim_id = log_verification(
                     claim_text=claim,
                     verdict=v.get("verdict", "Unsupported"),
                     evidence_chunk_id=v.get("chunk_id", ""),
@@ -269,6 +275,7 @@ def verify_claims_route():
                     component_scores=v.get("components", {}),
                     explanation="",   # explanation added later via /api/explain-claim
                 )
+                v["claim_id"] = claim_id
             except Exception:
                 pass  # logging failure must not break verification response
 
@@ -329,18 +336,13 @@ def explain_claim_route():
 
         # Module 6 — write/update provenance row with the explanation
         try:
-            # Find most recent row for this claim text if no claim_id given
-            if claim_id:
-                log_verification(
-                    claim_text=claim,
-                    verdict=verdict,
-                    evidence_chunk_id="",
-                    source_document_id="",
-                    fused_score=0.0,
-                    component_scores=components,
-                    explanation=result.get("explanation", ""),
-                    claim_id=claim_id,
-                )
+            provenance_id = claim_id
+            if provenance_id is None:
+                provenance_id = get_most_recent_claim_id_by_text(claim)
+ 
+            if provenance_id:
+                update_explanation(provenance_id, result.get("explanation", ""))
+                result["claim_id"] = provenance_id
         except Exception:
             pass
 

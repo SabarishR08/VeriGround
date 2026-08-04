@@ -103,7 +103,7 @@ export async function extractClaims(text) {
   throw new Error("Backend claim extraction unavailable.");
 }
 
-export async function retrieveEvidence(claims, sourceDocuments, k = 3) {
+export async function retrieveEvidence(claims, sourceDocuments, k = 5) {
   const res = await fetch(`${API_BASE}/retrieve-evidence`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

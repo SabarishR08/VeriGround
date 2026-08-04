@@ -181,6 +181,26 @@ def get_claim_by_id(claim_id: str) -> dict[str, Any] | None:
     return _row_to_dict(row) if row else None
 
 
+def get_most_recent_claim_id_by_text(claim_text: str) -> str | None:
+    """Return the latest claim_id for a given claim text, or None if missing."""
+    with sqlite3.connect(_DB_PATH) as conn:
+        row = conn.execute(
+            "SELECT claim_id FROM provenance WHERE claim_text = ? ORDER BY timestamp DESC LIMIT 1",
+            (claim_text,),
+        ).fetchone()
+    return row[0] if row else None
+
+
+def update_explanation(claim_id: str, explanation: str) -> None:
+    """Update the explanation text for an existing provenance row."""
+    with sqlite3.connect(_DB_PATH) as conn:
+        conn.execute(
+            "UPDATE provenance SET explanation = ?, timestamp = ? WHERE claim_id = ?",
+            (explanation, datetime.now(timezone.utc).isoformat(), claim_id),
+        )
+        conn.commit()
+
+
 def get_provenance_stats() -> dict[str, Any]:
     """
     Return aggregate counts per verdict — used by the dashboard summary bar.
