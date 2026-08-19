@@ -112,6 +112,67 @@ def segment_sentences(text: str) -> List[str]:
     return [s for s in final_sentences if len(s) > 1]
 
 
+def decompose_compound_claim(text: str) -> List[str]:
+    """
+    Decomposes a compound factual claim sentence into atomic, self-contained sub-claims.
+    Handles coordinate conjunctions ('and', 'but', 'as well as'), pronoun/subject resolution ('it', 'he', 'she'),
+    and predicate restoration for multi-clause assertions.
+    """
+    clean_text = text.strip()
+    if not clean_text:
+        return []
+
+    split_pattern = r'\b(?:,\s*and\s+(?:it|he|she|they)\b|,\s*and\b|\s+and\s+(?:it|he|she|they)\b|\s+and\s+(?:is|was|were|has|have|had|landed|freezes|boils|located|currently)\b|\s+and\b|,\s*but\b|,\s*which\b)'
+
+    parts = [p.strip() for p in re.split(split_pattern, clean_text, flags=re.IGNORECASE) if p.strip()]
+    if len(parts) <= 1:
+        return [clean_text]
+
+    first_part = parts[0]
+    words = first_part.split()
+    verb_indices = [i for i, w in enumerate(words) if w.lower() in {"was", "is", "are", "were", "released", "created", "launched", "boils", "freezes", "located", "has", "have"}]
+    
+    if verb_indices:
+        subject = " ".join(words[:verb_indices[0]])
+    elif len(words) >= 2:
+        subject = " ".join(words[:2])
+    else:
+        subject = words[0] if words else ""
+
+    secondary_subject = ""
+    if "released" in first_part.lower() or "created" in first_part.lower() or "launched" in first_part.lower():
+        obj_match = re.search(r'\b(?:released|created|launched|developed)\s+([A-Z0-9\-\.\s]+?)(?:\s+in|\s+at|\s+on|,|\.|$)', first_part)
+        if obj_match:
+            secondary_subject = obj_match.group(1).strip()
+
+    atomic_claims = []
+    for idx, part in enumerate(parts):
+        part_clean = part.strip().rstrip(".").strip()
+        if not part_clean:
+            continue
+
+        if idx == 0:
+            if not part_clean.endswith("."):
+                part_clean += "."
+            atomic_claims.append(part_clean)
+        else:
+            words_p = part_clean.split()
+            first_w = words_p[0].lower() if words_p else ""
+
+            if first_w in {"it", "he", "she", "they", "this", "that"}:
+                target_sub = secondary_subject if secondary_subject else subject
+                part_clean = target_sub + " " + " ".join(words_p[1:])
+            elif first_w in {"is", "was", "were", "has", "have", "had", "landed", "located", "freezes", "boils", "maintained", "created"}:
+                part_clean = subject + " " + part_clean
+
+            part_clean = part_clean[0].upper() + part_clean[1:] if part_clean else part_clean
+            if not part_clean.endswith("."):
+                part_clean += "."
+            atomic_claims.append(part_clean)
+
+    return atomic_claims
+
+
 def classify_sentence(sentence: str) -> Dict[str, Any]:
     """
     Classifies a sentence using strict, research-style hierarchical filtering:
@@ -129,9 +190,7 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
     s_lower = clean_s.lower()
     words = re.findall(r'\b\w+\b', s_lower)
     
-    # -------------------------------------------------------------------
     # 1. QUESTION CHECK
-    # -------------------------------------------------------------------
     question_starters = {
         "who", "what", "when", "where", "why", "how", "can", "could",
         "should", "would", "will", "is", "are", "do", "does", "did",
@@ -148,8 +207,6 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
         }
         
     if words and words[0] in question_starters and len(words) <= 12:
-        # Avoid misclassifying statements starting with 'Is' or 'Will' if part of a declarative title,
-        # but if it fits question syntax, mark as Question
         if words[0] in {"who", "what", "when", "where", "why", "how", "can", "could", "should", "would", "do", "does", "did"}:
             return {
                 "text": clean_s,
@@ -159,9 +216,7 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
                 "category": "Question"
             }
 
-    # -------------------------------------------------------------------
     # 2. COMMAND / IMPERATIVE CHECK
-    # -------------------------------------------------------------------
     command_triggers = {
         "please", "verify", "open", "summarize", "generate", "click", "check",
         "remember", "don't", "do not", "make sure", "ensure", "read", "run"
@@ -175,9 +230,7 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
             "category": "Command"
         }
 
-    # -------------------------------------------------------------------
     # 3. GREETING / CONVERSATIONAL NOISE CHECK
-    # -------------------------------------------------------------------
     greetings = [
         "hello", "hi", "good morning", "good afternoon", "thank you",
         "thanks", "welcome", "regards", "best regards", "thank you for reading", "thanks for reading"
@@ -191,9 +244,7 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
             "category": "Greeting"
         }
 
-    # -------------------------------------------------------------------
     # 4. OPINION / SUBJECTIVE JUDGMENT CHECK
-    # -------------------------------------------------------------------
     opinion_phrases = [
         "i think", "i believe", "in my opinion", "we believe", "our team believes",
         "many people think", "it seems", "i feel", "should use", "everyone should",
@@ -222,9 +273,7 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
             "category": "Opinion"
         }
 
-    # -------------------------------------------------------------------
     # 5. PREDICTION / FUTURE SPECULATION CHECK
-    # -------------------------------------------------------------------
     prediction_phrases = ["expected to", "likely to", "predicted", "forecast", "projected to"]
     if any(pw in s_lower for pw in prediction_phrases):
         return {
@@ -235,7 +284,6 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
             "category": "Prediction"
         }
 
-    # Future modals 'will', 'would', 'might' without historical date context
     if ("will" in words or "would" in words or "might" in words) and not re.search(r'\b(in|by|since|during)\s+(19\d\d|20[0-2]\d)\b', s_lower):
         return {
             "text": clean_s,
@@ -245,12 +293,10 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
             "category": "Prediction"
         }
 
-    # -------------------------------------------------------------------
     # 6. DECLARATIVE FACTUAL CLAIM CHECK
-    # -------------------------------------------------------------------
     has_year = bool(re.search(r'\b(19\d\d|20\d\d)\b', clean_s))
     has_numbers = bool(re.search(r'\b\d+(\.\d+)?(°c|%|km|m)?\b', s_lower))
-    has_fact_relations = any(rel in s_lower for rel in ["located in", "capital of", "revolves around", "boils at", "created by", "invented in", "released", "independent in"])
+    has_fact_relations = any(rel in s_lower for rel in ["located in", "capital of", "revolves around", "boils at", "created by", "invented in", "released", "independent in", "stands on", "built in", "launched"])
 
     capitalized_words = re.findall(r'\b[A-Z][a-zA-Z0-9\-]+\b', clean_s)
     proper_nouns = [w for idx, w in enumerate(capitalized_words) if idx > 0 or len(w) > 3]
@@ -275,12 +321,17 @@ def classify_sentence(sentence: str) -> Dict[str, Any]:
 
     confidence = min(max(score, 88), 99)
 
+    atomic_sub_claims = decompose_compound_claim(clean_s)
+    is_compound = len(atomic_sub_claims) > 1
+
     return {
         "text": clean_s,
         "is_claim": True,
         "confidence": confidence,
-        "reason": "Verifiable Factual Claim",
-        "category": "Verifiable Claim"
+        "reason": "Verifiable Factual Claim (Compound)" if is_compound else "Verifiable Factual Claim",
+        "category": "Verifiable Claim",
+        "is_compound": is_compound,
+        "atomic_claims": atomic_sub_claims
     }
 
 

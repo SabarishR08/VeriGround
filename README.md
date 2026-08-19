@@ -5,7 +5,11 @@
 [![React 18](https://img.shields.io/badge/React-18-cyan.svg)](https://reactjs.org/)
 [![FAISS CPU](https://img.shields.io/badge/FAISS-CPU%20v1.9-orange.svg)](https://github.com/facebookresearch/faiss)
 [![DeBERTa-v3](https://img.shields.io/badge/NLI-DeBERTa--v3--base-purple.svg)](https://huggingface.co/cross-encoder/nli-deberta-v3-base)
+<<<<<<< HEAD
+[![Ollama](https://img.shields.io/badge/XAI-Ollama%20phi3%3Amini%20%2F%20qwen2%3A1.5b-green.svg)](https://ollama.ai/)
+=======
 [![Ollama](https://img.shields.io/badge/XAI-Ollama%20qwen2%3A1.5b-green.svg)](https://ollama.ai/)
+>>>>>>> origin/main
 
 **VeriGround** is a real-time, claim-level evidence verification and provenance auditing framework designed specifically for Retrieval-Augmented Generation (RAG) systems. Unlike coarse system-level evaluation metrics or standard 3-way NLI classifiers, VeriGround decomposes LLM outputs into atomic claims, retrieves source evidence chunks, executes a novel **Weighted Evidence-Fusion Verification Pipeline**, and presents actionable provenance trails with explainable AI justifications on a live interactive dashboard.
 
@@ -47,7 +51,11 @@ flowchart TD
 
         subgraph Mod5 ["Module 5: Explainable AI"]
             XAI["Explanation Generator (explanation_generation.py)"]
+<<<<<<< HEAD
+            OLLAMA[("Local Ollama HTTP API (phi3:mini / qwen2:1.5b)")]
+=======
             OLLAMA[("Local Ollama HTTP API (qwen2:1.5b / phi3:mini)")]
+>>>>>>> origin/main
             FALLBACK["Score-Grounded Template Fallback"]
         end
     end
@@ -102,7 +110,11 @@ sequenceDiagram
     NLI-->>API: Fused Scores & Verdicts
 
     UI->>API: POST /api/explain-claim { claim, evidence, verdict, scores }
+<<<<<<< HEAD
+    API->>Ollama: POST /api/generate (phi3:mini / qwen2:1.5b)
+=======
     API->>Ollama: POST /api/generate (qwen2:1.5b)
+>>>>>>> origin/main
     alt Ollama Online
         Ollama-->>API: Grounded Single-Sentence Explanation
     else Ollama Unreachable / Timeout
@@ -132,20 +144,35 @@ $$\text{Verification Score} = \alpha \cdot \text{SemSim} + \beta \cdot P(\text{e
 
 | Verdict Category | Fused Score Band / Condition | Description |
 | :--- | :--- | :--- |
+<<<<<<< HEAD
+| **Supported** 🟢 | $\text{Fused Score} \ge 0.70$ | Evidence strongly entails all atomic facts in the claim. |
+| **Partially Supported** 🟡 | $0.40 \le \text{Fused Score} < 0.70$ | Claim is directionally correct, but evidence omits specific details/entities. |
+| **Unsupported** ⚪ | $0.10 \le \text{Fused Score} < 0.40$ or $\text{SemSim} < 0.15$ | Evidence is off-topic or neutral regarding the claim. |
+| **Contradicted** 🔴 | $\text{Fused Score} < 0.10$ or $P(\text{contradict}) > 0.60$ | Evidence explicitly negates the assertions in the claim. |
+=======
 | **Supported** | $\text{Fused Score} \ge 0.70$ | Evidence strongly entails all atomic facts in the claim. |
 | **Partially Supported** | $0.40 \le \text{Fused Score} < 0.70$ | Claim is directionally correct, but evidence omits specific details/entities. |
 | **Unsupported** | $0.10 \le \text{Fused Score} < 0.40$ or $\text{SemSim} < 0.15$ | Evidence is off-topic or neutral regarding the claim. |
 | **Contradicted** | $\text{Fused Score} < 0.10$ or $P(\text{contradict}) > 0.60$ | Evidence explicitly negates the assertions in the claim. |
+>>>>>>> origin/main
 
 ---
 
 ## 🚀 Key Features
 
+<<<<<<< HEAD
+1. **Atomic Claim Extraction & Coreference Resolution**: Rule-based sentence segmentation with spaCy fallback to split complex LLM answers into single, testable factual propositions with subject restoration for pronouns (`it`, `he`, `she`).
+2. **Fast CPU-Only In-Process Retrieval**: Embeds documents using `all-MiniLM-L6-v2` and searches flat inner-product FAISS vector indexes on the fly—zero external database servers required.
+3. **Robust Asymmetric NLI**: Formulates claim verification as premise ($E$) to hypothesis ($C$) inference using `cross-encoder/nli-deberta-v3-base`. Includes off-topic semantic gates ($\text{SemSim} < 0.15$) to prevent false contradiction triggers.
+4. **Local Explainable AI (XAI)**: Generates precise single-sentence human-readable justifications grounded in numerical score breakdowns via local Ollama (`phi3:mini` or `qwen2:1.5b`). Includes automatic zero-latency fallback templates when Ollama is offline.
+5. **Low Hardware Footprint**: Fully optimized to run locally on consumer laptops (e.g., Ryzen 3 / Core i5 CPU, 8–12GB RAM, CPU-only PyTorch).
+=======
 1. **Atomic Claim Extraction**: Rule-based sentence segmentation with spaCy fallback to split complex LLM answers into single, testable factual propositions.
 2. **Fast CPU-Only In-Process Retrieval**: Embeds documents using `all-MiniLM-L6-v2` and searches flat inner-product FAISS vector indexes on the fly—zero external database servers required.
 3. **Robust Asymmetric NLI**: Formulates claim verification as premise ($E$) to hypothesis ($C$) inference using `cross-encoder/nli-deberta-v3-base`. Includes off-topic semantic gates ($\text{SemSim} < 0.15$) to prevent false contradiction triggers.
 4. **Local Explainable AI (XAI)**: Generates precise single-sentence human-readable justifications grounded in numerical score breakdowns via local Ollama (`qwen2:1.5b` or `phi3:mini`). Includes automatic zero-latency fallback templates when Ollama is offline.
 5. **Low Hardware Footprint**: Fully optimized to run locally on consumer laptops (e.g., Ryzen 3 CPU, 12GB RAM, CPU-only PyTorch).
+>>>>>>> origin/main
 
 ---
 
@@ -162,8 +189,13 @@ VeriGround/
 │   ├── file_parser.py                 # Document Parsing Utilities (PDF, DOCX, TXT)
 │   ├── requirements.txt               # Backend Python Dependencies
 │   ├── test_evidence_retrieval.py     # Module 3 Verification Test Suite
+<<<<<<< HEAD
+│   ├── test_nli_verification.py       # Module 4 Verdict Verification Test Suite
+│   └── test_explanation_generation.py # Module 5 Ollama / Fallback Test Suite
+=======
 │   ├── test_nli_verification.py          # Module 4 Verdict Verification Test Suite
 │   └── test_explanation_generation.py  # Module 5 Ollama / Fallback Test Suite
+>>>>>>> origin/main
 ├── frontend/                          # React + Vite Interactive Dashboard
 │   ├── src/
 │   │   ├── components/                # Modular React Dashboard Components
@@ -175,6 +207,10 @@ VeriGround/
 │   └── module4_debugging_notes.md     # In-depth Engineering Notes & NLI Edge-Case Analysis
 ├── VeriGround_Project_Plan.pdf        # System Technical Specification (PDF)
 ├── VeriGround_Project_Plan.docx       # System Technical Specification (DOCX)
+<<<<<<< HEAD
+├── DEPLOYMENT.md                      # Vercel & Production Deployment Guide
+=======
+>>>>>>> origin/main
 └── README.md                          # Project Documentation
 ```
 
@@ -210,7 +246,11 @@ python app.py
 ### 3. Optional Local LLM (Ollama) Setup
 ```bash
 # Pull lightweight model for explanation generation
+<<<<<<< HEAD
+ollama pull phi3:mini  # or: ollama pull qwen2:1.5b
+=======
 ollama pull qwen2:1.5b
+>>>>>>> origin/main
 
 # Start Ollama server (runs on http://localhost:11434)
 ollama serve

@@ -13,10 +13,14 @@ Run from the backend/ directory:
 First call to phi3:mini may take 20-30s while the model loads into RAM.
 Subsequent calls within the same Ollama session are faster (~5-10s).
 """
-
+import sys
 import json
 import time
 from explanation_generation import generate_explanation, _fallback_explanation
+
+# UTF-8 Output Guard for Windows powershell/cmd terminals
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # The four verdict cases — identical inputs to Module 4's passing test
@@ -45,8 +49,7 @@ TEST_CASES = [
         "claim": "Exercise reduces the risk of heart disease.",
         "evidence": (
             "Regular physical exercise has been shown to improve cardiovascular "
-            "health and reduce the risk of heart disease in multiple large-scale "
-            "clinical studies."
+            "health and reduce the risk of heart disease, stroke, and diabetes."
         ),
         "verdict": "Partially Supported",
         "components": {
@@ -62,8 +65,8 @@ TEST_CASES = [
         "claim": "The Amazon rainforest produces 20 percent of the world's oxygen.",
         "evidence": (
             "Water boils at 100 degrees Celsius under standard atmospheric "
-            "pressure of 101.325 kPa. At higher altitudes the boiling point "
-            "decreases due to lower atmospheric pressure."
+            "pressure of 101.325 kPa. At higher altitudes, atmospheric pressure "
+            "is lower, which causes water to boil at lower temperatures."
         ),
         "verdict": "Unsupported",
         "components": {
@@ -97,10 +100,10 @@ TEST_CASES = [
 ]
 
 VERDICT_ICON = {
-    "Supported":           "✅",
-    "Partially Supported": "🟡",
-    "Unsupported":         "⬜",
-    "Contradicted":        "❌",
+    "Supported":           "[+]",
+    "Partially Supported": "[~]",
+    "Unsupported":         "[?]",
+    "Contradicted":        "[x]",
 }
 
 

@@ -3,8 +3,14 @@ import Header from './components/Header';
 import WorkflowStepper from './components/WorkflowStepper';
 import Module1Input from './components/Module1Input';
 import Module2Extraction from './components/Module2Extraction';
+<<<<<<< HEAD
+import Module3Preview from './components/Module3Preview';
+import Module4Verification from './components/Module4Verification';
+import Module5Explanation from './components/Module5Explanation';
+=======
 import ResultsDashboard from './components/ResultsDashboard';
 import ProvenanceLogTable from './components/ProvenanceLogTable';
+>>>>>>> origin/main
 import SampleDataSelector from './components/SampleDataSelector';
 import ArchitectureModal from './components/ArchitectureModal';
 import {
@@ -22,15 +28,28 @@ export default function App() {
   const [activeStep, setActiveStep] = useState(1);
   const [backendOnline, setBackendOnline] = useState(false);
   
-  // Input & Preprocess States
+  // Theme State ('dark' | 'light') — Default: Theme 1 Modern IEEE Research Paper Style ('light')
+  const [theme, setTheme] = useState(() => localStorage.getItem('veriground_theme') || 'light');
+
+  // Input & Preprocess States (Module 1)
   const [inputText, setInputText] = useState('');
   const [preprocessResult, setPreprocessResult] = useState(null);
   const [isPreprocessLoading, setIsPreprocessLoading] = useState(false);
 
-  // Claim Extraction States
+  // Claim Extraction States (Module 2)
   const [extractionResult, setExtractionResult] = useState(null);
   const [isExtractionLoading, setIsExtractionLoading] = useState(false);
 
+<<<<<<< HEAD
+  // Evidence Retrieval States (Module 3)
+  const [retrievalResult, setRetrievalResult] = useState(null);
+
+  // NLI & Fusion Verification States (Module 4)
+  const [verificationResult, setVerificationResult] = useState(null);
+
+  // Explainable AI States (Module 5)
+  const [explanationResult, setExplanationResult] = useState(null);
+=======
   // Full Pipeline Verification States (Modules 3, 4, 5)
   const [isFullPipelineLoading, setIsFullPipelineLoading] = useState(false);
   const [pipelineStage, setPipelineStage] = useState(''); // 'retrieving' | 'verifying' | 'explaining'
@@ -38,11 +57,26 @@ export default function App() {
   const [verificationResult, setVerificationResult] = useState(null);
   const [explanationResults, setExplanationResults] = useState([]);
   const [currentExplainIndex, setCurrentExplainIndex] = useState(0);
+>>>>>>> origin/main
 
   // Modal States
   const [samples, setSamples] = useState([]);
   const [isSampleModalOpen, setIsSampleModalOpen] = useState(false);
   const [isArchModalOpen, setIsArchModalOpen] = useState(false);
+
+  // Update theme class on body
+  useEffect(() => {
+    if (theme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+    localStorage.setItem('veriground_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Check health & load sample on startup
   useEffect(() => {
@@ -60,7 +94,7 @@ export default function App() {
     init();
   }, []);
 
-  // Preprocess Handler
+  // Preprocess Handler (Module 1)
   const handlePreprocess = async (sourceType) => {
     if (!inputText.trim()) return;
     setIsPreprocessLoading(true);
@@ -74,7 +108,7 @@ export default function App() {
     }
   };
 
-  // Claim Extraction Handler
+  // Claim Extraction Handler (Module 2)
   const handleExtractClaims = async () => {
     const textToExtract = preprocessResult?.cleaned_text || inputText;
     if (!textToExtract.trim()) return;
@@ -162,23 +196,31 @@ export default function App() {
     setExtractionResult(null);
     setRetrievalResult(null);
     setVerificationResult(null);
+<<<<<<< HEAD
+    setExplanationResult(null);
+=======
     setExplanationResults([]);
+>>>>>>> origin/main
     setActiveStep(1);
   };
 
-  // Clear Handler
+  // Clear / Reset Handler
   const handleClear = () => {
     setInputText('');
     setPreprocessResult(null);
     setExtractionResult(null);
     setRetrievalResult(null);
     setVerificationResult(null);
+<<<<<<< HEAD
+    setExplanationResult(null);
+=======
     setExplanationResults([]);
+>>>>>>> origin/main
     setActiveStep(1);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070B14] text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-blue-500/20 selection:text-blue-700 bg-white text-[#202124] relative">
       
       {/* Header Bar */}
       <Header
@@ -192,6 +234,18 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
+<<<<<<< HEAD
+        {/* Workflow Stepper */}
+        <WorkflowStepper
+          activeStep={activeStep}
+          setActiveStep={setActiveStep}
+          isPreprocessed={!!preprocessResult}
+          isExtracted={!!extractionResult}
+          isRetrieved={!!retrievalResult}
+          isVerified={!!verificationResult}
+          isExplained={!!explanationResult}
+        />
+=======
         {activeTab === 'pipeline' ? (
           <>
             {/* Workflow Stepper */}
@@ -205,6 +259,7 @@ export default function App() {
               isExplained={explanationResults.length > 0}
               currentStage={pipelineStage}
             />
+>>>>>>> origin/main
 
             {/* Step Views */}
             {activeStep === 1 && (
@@ -230,6 +285,36 @@ export default function App() {
               />
             )}
 
+<<<<<<< HEAD
+        {activeStep === 3 && (
+          <Module3Preview
+            claims={extractionResult?.claims || []}
+            onRetrievalComplete={(data) => setRetrievalResult(data)}
+            onContinueToModule4={(data) => {
+              setRetrievalResult(data);
+              setActiveStep(4);
+            }}
+          />
+        )}
+
+        {activeStep === 4 && (
+          <Module4Verification
+            retrievalData={retrievalResult}
+            onVerificationComplete={(data) => setVerificationResult(data)}
+            onContinueToModule5={(data) => {
+              setVerificationResult(data);
+              setActiveStep(5);
+            }}
+          />
+        )}
+
+        {activeStep === 5 && (
+          <Module5Explanation
+            verificationData={verificationResult}
+            retrievalData={retrievalResult}
+            onReset={handleClear}
+          />
+=======
             {(activeStep >= 3) && (
               <ResultsDashboard
                 claims={extractionResult?.claims || []}
@@ -244,18 +329,23 @@ export default function App() {
         ) : (
           /* Provenance Log View */
           <ProvenanceLogTable />
+>>>>>>> origin/main
         )}
 
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-[#060912] py-6 text-center text-xs text-slate-500 font-mono">
+      <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 font-mono transition-colors">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
             <strong>VeriGround Framework</strong> — Claim-level truth for AI answers
           </div>
           <div>
+<<<<<<< HEAD
+            End-to-End 5-Module Retrieval-Grounding Pipeline
+=======
             Modules 1–7 End-to-End Verified System
+>>>>>>> origin/main
           </div>
         </div>
       </footer>

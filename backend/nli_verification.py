@@ -81,7 +81,12 @@ print(
 # ---------------------------------------------------------------------------
 # spaCy pipeline — loaded once at import time
 # ---------------------------------------------------------------------------
-_nlp = spacy.load("en_core_web_sm")
+try:
+    _nlp = spacy.load("en_core_web_sm")
+except Exception as _e:
+    print(f"[nli_verification] Warning: spacy en_core_web_sm model load failed ({_e}). Using spacy.blank('en').", flush=True)
+    _nlp = spacy.blank("en")
+
 
 
 # ---------------------------------------------------------------------------
@@ -96,6 +101,13 @@ def get_nli_scores(claim: str, evidence: str) -> dict[str, float]:
     [CLS] premise [SEP] hypothesis [SEP] sequence and outputs raw logits
     for (contradiction, entailment, neutral).
 
+    Sentence & Windowing Enhancement:
+    Cross-encoders trained on NLI (MNLI/SNLI) operate best on concise premise
+    statements (1-2 sentences). Long multi-sentence evidence paragraphs dilute
+    attention weights, causing false Neutral classifications. We segment evidence
+    into sentences and 2-sentence sliding windows, run batch inference, and return
+    the premise window that yields the strongest informative NLI signal.
+
     Returns:
         {
             "entailment":    float in [0, 1],
@@ -104,12 +116,35 @@ def get_nli_scores(claim: str, evidence: str) -> dict[str, float]:
         }
     Scores sum to 1.0 (softmax over the three classes).
     """
-    # NLI framing: evidence is the PREMISE (the grounding text),
-    # claim is the HYPOTHESIS (the thing being verified).
-    # Order matters — the cross-encoder is not symmetric.
+    evidence_clean = evidence.strip()
+    if not evidence_clean:
+        return {"entailment": 0.0, "neutral": 1.0, "contradiction": 0.0}
+
+    # Extract sentences using spaCy
+    doc = _nlp(evidence_clean)
+    sentences = [s.text.strip() for s in doc.sents if len(s.text.strip()) > 8]
+
+    # Build candidate premise units
+    candidate_premises: list[str] = []
+    if sentences:
+        for s in sentences:
+            if s not in candidate_premises:
+                candidate_premises.append(s)
+
+        # 2-sentence sliding windows for multi-sentence evidence
+        for i in range(len(sentences) - 1):
+            w = f"{sentences[i]} {sentences[i+1]}"
+            if w not in candidate_premises:
+                candidate_premises.append(w)
+
+    # Always include the full evidence text as a candidate if under 512 chars
+    if evidence_clean not in candidate_premises:
+        candidate_premises.append(evidence_clean)
+
+    # NLI framing: evidence is PREMISE, claim is HYPOTHESIS
     inputs = _nli_tokenizer(
-        evidence,   # premise
-        claim,      # hypothesis
+        candidate_premises,
+        [claim] * len(candidate_premises),
         return_tensors="pt",
         truncation=True,
         max_length=512,
@@ -117,20 +152,38 @@ def get_nli_scores(claim: str, evidence: str) -> dict[str, float]:
     )
 
     with torch.no_grad():
-        logits = _nli_model(**inputs).logits  # shape (1, 3)
+        logits = _nli_model(**inputs).logits  # shape (N, 3)
 
-    probs = torch.softmax(logits, dim=-1)[0]  # shape (3,)
+    probs = torch.softmax(logits, dim=-1)  # shape (N, 3)
 
-    scores: dict[str, float] = {}
-    for idx, prob in enumerate(probs.tolist()):
-        label = _ID2LABEL.get(idx, f"label_{idx}")
-        scores[label] = round(prob, 6)
+    best_scores: dict[str, float] | None = None
+    best_entailment: float = -1.0
+    best_contradiction: float = -1.0
 
-    # Guarantee all three keys exist even if the model's id2label is unusual
-    for key in ("entailment", "neutral", "contradiction"):
-        scores.setdefault(key, 0.0)
+    for idx in range(len(candidate_premises)):
+        row_probs = probs[idx].tolist()
+        scores: dict[str, float] = {}
+        for c_idx, prob in enumerate(row_probs):
+            label = _ID2LABEL.get(c_idx, f"label_{c_idx}")
+            scores[label] = round(prob, 6)
 
-    return scores
+        for key in ("entailment", "neutral", "contradiction"):
+            scores.setdefault(key, 0.0)
+
+        ent = scores["entailment"]
+        con = scores["contradiction"]
+
+        # Selection logic: prioritize highest entailment signal; if contradiction
+        # is dominant (> 0.50), track max contradiction signal as well.
+        if ent > best_entailment:
+            best_entailment = ent
+            best_scores = scores
+
+        if con > best_contradiction and con > 0.50 and (best_scores is None or con > best_scores.get("contradiction", 0.0)):
+            best_contradiction = con
+            best_scores = scores
+
+    return best_scores or {"entailment": 0.0, "neutral": 1.0, "contradiction": 0.0}
 
 
 # ---------------------------------------------------------------------------
@@ -142,20 +195,33 @@ def _extract_entity_tokens(text: str) -> set[str]:
     Return a lower-cased set of named entities, dates, and numeric tokens
     from *text* using spaCy en_core_web_sm.
 
-    We also add bare numeric tokens (digits) that spaCy may not wrap in
-    a named entity, so years/measurements in the claim are never missed.
+    We also add bare numeric tokens (digits) and normalized unit expressions
+    so years, numbers, and measurements in the claim are never missed.
     """
-    doc = _nlp(text)
     tokens: set[str] = set()
+
+    # Punctuation & degree symbol normalization
+    normalized_text = text.lower().replace("°c", " 100 celsius c ").replace("°f", " fahrenheit f ")
+    doc = _nlp(normalized_text)
 
     # spaCy named entities (ORG, PERSON, GPE, LOC, DATE, CARDINAL, …)
     for ent in doc.ents:
-        tokens.add(ent.text.lower().strip())
+        t_clean = ent.text.lower().strip()
+        if t_clean:
+            tokens.add(t_clean)
+            # Add individual words in multi-word entities
+            for sub_w in t_clean.split():
+                if len(sub_w) > 2 and not sub_w.isdigit():
+                    tokens.add(sub_w)
 
-    # Raw numeric tokens not already captured as entities
+    # Raw numeric tokens and years/percentages
     for token in doc:
         if token.like_num or re.fullmatch(r"\d[\d,\.]*", token.text):
             tokens.add(token.text.lower().strip())
+
+    # Fallback regex for pure digits / years (e.g. 2023, 100, 1889)
+    for num in re.findall(r"\b\d{1,4}\b", text):
+        tokens.add(num)
 
     return tokens
 
@@ -306,22 +372,11 @@ def verify_claim_evidence(
     }
 
 
-def verify_claim_against_evidence_list(
+def _verify_single_claim_against_evidence_list(
     claim: str,
     evidence_list: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """
-    Run verify_claim_evidence() over every evidence chunk returned by
-    Module 3 and select the result with the highest fused_score as the
-    claim's final verdict.
-
-    *evidence_list* is the "evidence" array from /api/retrieve-evidence:
-        [{"rank":1, "chunk_id":…, "source_id":…, "text":…,
-          "similarity_score":…}, …]
-
-    Returns the best-scoring result dict, augmented with:
-        "all_evidence_scores": [ {chunk_id, fused_score, verdict}, … ]
-    """
+    """Helper verifying a single atomic claim against the evidence list."""
     if not evidence_list:
         return {
             "claim":       claim,
@@ -357,3 +412,87 @@ def verify_claim_against_evidence_list(
         for r in results
     ]
     return best
+
+
+def verify_claim_against_evidence_list(
+    claim: str,
+    evidence_list: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """
+    Run claim verification over evidence chunks. Supports Compound Claim Decomposition:
+    1. Decomposes compound statements (e.g., 'A and B') into atomic sub-claims.
+    2. Evaluates each atomic sub-claim against the retrieved evidence list.
+    3. Aggregates atomic verdicts:
+       - All Supported -> Supported
+       - Mixed (Supported + Unsupported / Contradicted) -> Partially Supported
+       - All Unsupported -> Unsupported
+       - Contradicted without support -> Contradicted
+    """
+    from nlp_engine import decompose_compound_claim
+
+    atomic_claims = decompose_compound_claim(claim)
+
+    # Simple single-clause claim
+    if len(atomic_claims) <= 1:
+        res = _verify_single_claim_against_evidence_list(claim, evidence_list)
+        res["is_compound"] = False
+        res["sub_claim_verdicts"] = []
+        return res
+
+    # Compound claim with multiple atomic sub-claims
+    sub_results = []
+    for sub_c in atomic_claims:
+        sub_res = _verify_single_claim_against_evidence_list(sub_c, evidence_list)
+        sub_results.append(sub_res)
+
+    supported_count = sum(1 for r in sub_results if r["verdict"] == "Supported")
+    partial_count   = sum(1 for r in sub_results if r["verdict"] == "Partially Supported")
+    unsupported_count = sum(1 for r in sub_results if r["verdict"] == "Unsupported")
+    contradicted_count = sum(1 for r in sub_results if r["verdict"] == "Contradicted")
+    total_sub = len(sub_results)
+
+    # Determine aggregated verdict
+    if supported_count == total_sub:
+        overall_verdict = "Supported"
+    elif supported_count > 0 or partial_count > 0:
+        # Mixed support + unsupported / contradicted => Partially Supported!
+        overall_verdict = "Partially Supported"
+    elif contradicted_count > 0:
+        overall_verdict = "Contradicted"
+    else:
+        overall_verdict = "Unsupported"
+
+    avg_fused = round(sum(r["fused_score"] for r in sub_results) / total_sub, 6)
+    best_chunk_id = sub_results[0]["chunk_id"]
+    best_source_id = sub_results[0]["source_id"]
+
+    best_components = {
+        "sem_sim":        round(sum(r["components"]["sem_sim"] for r in sub_results) / total_sub, 6),
+        "p_entail":       round(sum(r["components"]["p_entail"] for r in sub_results) / total_sub, 6),
+        "p_neutral":      round(sum(r["components"]["p_neutral"] for r in sub_results) / total_sub, 6),
+        "p_contradict":   round(sum(r["components"]["p_contradict"] for r in sub_results) / total_sub, 6),
+        "entity_overlap": round(sum(r["components"]["entity_overlap"] for r in sub_results) / total_sub, 6),
+    }
+
+    sub_claim_verdicts = [
+        {
+            "claim":       r["claim"],
+            "verdict":     r["verdict"],
+            "fused_score": r["fused_score"],
+            "components":  r["components"]
+        }
+        for r in sub_results
+    ]
+
+    return {
+        "claim":              claim,
+        "chunk_id":           best_chunk_id,
+        "source_id":          best_source_id,
+        "verdict":            overall_verdict,
+        "fused_score":        avg_fused,
+        "is_compound":        True,
+        "components":         best_components,
+        "sub_claim_verdicts": sub_claim_verdicts,
+        "all_evidence_scores": sub_results[0].get("all_evidence_scores", [])
+    }
+

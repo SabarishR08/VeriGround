@@ -36,10 +36,10 @@ export default function SampleDataSelector({ isOpen, onClose, samples, onSelectS
                 onSelectSample(sample);
                 onClose();
               }}
-              className="p-4 rounded-xl bg-[#0B1120] border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-900/90 transition-all cursor-pointer group space-y-2"
+              className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 hover:bg-slate-800/90 transition-all cursor-pointer group space-y-2"
             >
               <div className="flex justify-between items-center">
-                <h4 className="text-sm font-bold text-cyan-300 group-hover:text-cyan-200 flex items-center space-x-2">
+                <h4 className="text-sm font-bold text-cyan-400 group-hover:text-cyan-300 flex items-center space-x-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                   <span>{sample.title}</span>
                 </h4>
@@ -49,7 +49,7 @@ export default function SampleDataSelector({ isOpen, onClose, samples, onSelectS
                 </span>
               </div>
               <p className="text-xs text-slate-400">{sample.description}</p>
-              <pre className="text-[11px] font-mono text-slate-300 bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 whitespace-pre-wrap max-h-32 overflow-hidden">
+              <pre className="text-[11px] font-mono text-slate-200 bg-slate-950 p-2.5 rounded-lg border border-slate-800/80 whitespace-pre-wrap max-h-32 overflow-hidden">
                 {sample.text}
               </pre>
             </div>
