@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Cpu, CheckCircle2, XCircle, Sparkles, ArrowRight, RefreshCw, BarChart2, ShieldCheck, HelpCircle, MessageSquare, AlertTriangle, Terminal, Filter } from 'lucide-react';
+import { Cpu, CheckCircle2, XCircle, ArrowRight, RefreshCw, BarChart2, ShieldCheck, HelpCircle, MessageSquare, AlertTriangle, Terminal, Filter } from 'lucide-react';
 
 export default function Module2Extraction({ 
   processedText, 
@@ -68,14 +68,13 @@ export default function Module2Extraction({
     <div className="w-full max-w-7xl mx-auto space-y-8 animate-fadeIn">
       
       {/* Title Header Card */}
-      <div className="text-center py-6 glass-panel rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl"></div>
+      <div className="text-center py-6 rounded-2xl border border-gray-200 bg-white shadow-sm relative overflow-hidden">
+        
 
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
           Module 2 (Strict Research Evaluation Engine)
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
           Intelligent Claim Extraction Module
         </h2>
         <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
@@ -115,7 +114,7 @@ export default function Module2Extraction({
             type="button"
             onClick={onExtractClaims}
             disabled={isLoading || !sentences || sentences.length === 0}
-            className="w-full flex items-center justify-center space-x-2 py-4 rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-extrabold text-sm shadow-glow-violet disabled:opacity-50 transition-all cursor-pointer"
+            className="w-full flex items-center justify-center space-x-2 py-4 rounded-xl bg-primary text-white font-semibold text-sm shadow-sm disabled:opacity-50 transition-all cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -124,7 +123,6 @@ export default function Module2Extraction({
               </>
             ) : (
               <>
-                <Sparkles className="w-5 h-5" />
                 <span>[ Extract Claims ]</span>
               </>
             )}
@@ -141,7 +139,7 @@ export default function Module2Extraction({
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center space-x-3">
                 <BarChart2 className="w-5 h-5 text-cyan-400" />
-                <h3 className="text-base font-extrabold text-white">Research Classification Metrics</h3>
+                <h3 className="text-base font-semibold text-gray-900">Research Classification Metrics</h3>
               </div>
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
                 Strict Filtering Enabled
@@ -154,17 +152,17 @@ export default function Module2Extraction({
                 <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                   Total Sentences
                 </span>
-                <p className="text-3xl font-extrabold text-white font-mono">
+                <p className="text-3xl font-semibold text-gray-900 font-mono">
                   {extractionResult.stats.total_sentences}
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-1 shadow-glow-emerald">
+              <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 text-center space-y-1 shadow-sm">
                 <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center justify-center space-x-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Claims Extracted</span>
                 </span>
-                <p className="text-3xl font-extrabold text-emerald-400 font-mono">
+                <p className="text-3xl font-semibold text-emerald-400 font-mono">
                   {extractionResult.stats.claims_extracted}
                 </p>
               </div>
@@ -174,7 +172,7 @@ export default function Module2Extraction({
                   <XCircle className="w-3.5 h-3.5" />
                   <span>Ignored Sentences</span>
                 </span>
-                <p className="text-3xl font-extrabold text-rose-400 font-mono">
+                <p className="text-3xl font-semibold text-rose-400 font-mono">
                   {extractionResult.stats.ignored_count}
                 </p>
               </div>
@@ -188,7 +186,7 @@ export default function Module2Extraction({
             {/* Left Column: Factual Claims List */}
             <div className="lg:col-span-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-extrabold text-emerald-400 flex items-center space-x-2">
+                <h3 className="text-lg font-semibold text-emerald-400 flex items-center space-x-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-400" />
                   <span>✓ Verifiable Factual Claims ({extractionResult.claims?.length || 0})</span>
                 </h3>
@@ -202,7 +200,7 @@ export default function Module2Extraction({
                   {extractionResult.claims.map((claim, idx) => (
                     <div 
                       key={idx}
-                      className="glass-panel rounded-xl p-5 border border-emerald-500/40 shadow-glow-emerald space-y-3 relative overflow-hidden transition-all hover:translate-y-[-2px]"
+                      className="rounded-xl p-5 border border-gray-100 bg-white space-y-3 relative overflow-hidden transition-all hover:translate-y-[-2px] shadow-sm"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -217,7 +215,7 @@ export default function Module2Extraction({
                         {/* Confidence Percentage Badge */}
                         <div className="flex items-center space-x-2 bg-[#0B1120] px-3 py-1 rounded-full border border-emerald-500/30">
                           <span className="text-xs text-slate-400 font-medium">Confidence:</span>
-                          <span className="text-xs font-extrabold text-emerald-400 font-mono">
+                          <span className="text-xs font-semibold text-emerald-400 font-mono">
                             {claim.confidence}%
                           </span>
                         </div>
@@ -250,7 +248,7 @@ export default function Module2Extraction({
             {/* Right Column: Ignored Sentences with Category Filters */}
             <div className="lg:col-span-6 space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-extrabold text-rose-400 flex items-center space-x-2">
+                <h3 className="text-lg font-semibold text-rose-400 flex items-center space-x-2">
                   <XCircle className="w-5 h-5 text-rose-400" />
                   <span>Filtered Non-Verifiable Sentences ({ignoredList.length})</span>
                 </h3>
@@ -290,7 +288,7 @@ export default function Module2Extraction({
                             </span>
                           </div>
                           
-                          <span className={`text-xs font-extrabold px-2.5 py-0.5 rounded-full border ${badge.bg}`}>
+                          <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${badge.bg}`}>
                             {badge.label}
                           </span>
                         </div>
@@ -327,7 +325,7 @@ export default function Module2Extraction({
             <button
               type="button"
               onClick={onContinueToModule3}
-              className="w-full flex items-center justify-center space-x-2 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm shadow-glow-cyan transition-all cursor-pointer"
+              className="w-full flex items-center justify-center space-x-2 py-4 rounded-xl bg-primary text-white font-semibold text-sm shadow-sm transition-all cursor-pointer"
             >
               <span>[ Continue to Semantic Grounding Analysis ]</span>
               <ArrowRight className="w-4 h-4" />

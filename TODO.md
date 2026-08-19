@@ -1,0 +1,33 @@
+# VeriGround â€” daily improvement backlog
+# Fact-verification / NLI platform (Python backend + React/Vite frontend)
+
+- [ ] Add module-level docstrings to backend/nli_verification.py describing its purpose and usage
+- [ ] Add type hints to all functions in backend/evidence_retrieval.py
+- [ ] Add type hints to all functions in backend/explanation_generation.py
+- [ ] Add a __version__ = "0.1.0" to backend/__init__.py if it exists, else create it
+- [ ] Add logging.getLogger(__name__) to backend/app.py replacing bare print() calls
+- [ ] Add input validation in backend/app.py: reject claims shorter than 3 words with HTTP 400
+- [ ] Add a /health endpoint to backend/app.py returning {"status": "ok"}
+- [ ] Add a constants.py in backend/ for model names and threshold values used across modules
+- [ ] Add try/except with logging around the NLI model inference call in nli_verification.py
+- [ ] Add a truncate_text(text, max_tokens=512) helper in backend/nlp_engine.py
+- [ ] Add a confidence_label() helper that maps float score to "HIGH"/"MEDIUM"/"LOW"
+- [ ] Add a normalise_claim(text) function that strips extra whitespace and lowercases
+- [ ] Add a CONTRIBUTING.md at repo root with backend setup instructions
+- [ ] Add a .editorconfig at repo root (4-space indent, utf-8, lf line endings)
+- [ ] Add a requirements-dev.txt in backend/ with pytest, ruff
+- [ ] Add a pytest.ini at repo root with testpaths = ["backend"]
+- [ ] Add a smoke test in backend/ that imports nli_verification and asserts module loads
+- [ ] Add __all__ to backend/nlp_engine.py listing its public symbols
+- [ ] Add caching decorator to evidence_retrieval so identical queries are not re-fetched
+- [ ] Add a provenance_summary() function to provenance_store.py that returns source count
+- [ ] Add elapsed-time logging around the evidence retrieval call
+- [ ] Add elapsed-time logging around the NLI inference call
+- [ ] Add a retry helper (3 attempts, exponential backoff) for external evidence API calls
+- [ ] Add an error_code field to the verification result dict (e.g. "NLI_TIMEOUT")
+- [ ] Normalise all raised exception messages to sentence case
+- [ ] Add a .gitattributes file to the repo root normalising line endings
+- [ ] Add a top-level README section "Architecture" describing the pipeline stages
+- [ ] Add a dataclass VerificationResult replacing plain dict returns from nli_verification
+- [ ] Add a dataclass EvidenceItem replacing plain dict returns from evidence_retrieval
+- [ ] Add a CLI entry point in backend/ that accepts a claim string and prints the verdict

@@ -33,7 +33,7 @@ export default function ProvenanceLogTable() {
     switch (verdict) {
       case 'Supported':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 text-xs font-bold">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md bg-success/10 text-success border border-success/20 text-xs font-semibold">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>Supported</span>
           </span>
@@ -72,7 +72,7 @@ export default function ProvenanceLogTable() {
         <div>
           <div className="flex items-center space-x-2">
             <Database className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-xl font-bold text-white">Provenance Audit Store</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Provenance Audit Store</h2>
           </div>
           <p className="text-xs text-slate-400 mt-1">
             SQLite-backed claim-to-source verification trail with full component score telemetry
@@ -110,23 +110,23 @@ export default function ProvenanceLogTable() {
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <div className="glass-panel p-4 rounded-xl border border-slate-800">
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Claims Logged</div>
-            <div className="text-2xl font-extrabold text-white mt-1">{stats.total}</div>
+            <div className="text-2xl font-semibold text-gray-900 mt-1">{stats.total}</div>
           </div>
           <div className="glass-panel p-4 rounded-xl border border-emerald-900/40 bg-emerald-950/10">
             <div className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Supported</div>
-            <div className="text-2xl font-extrabold text-emerald-400 mt-1">{stats.by_verdict.Supported || 0}</div>
+            <div className="text-2xl font-semibold text-emerald-400 mt-1">{stats.by_verdict.Supported || 0}</div>
           </div>
           <div className="glass-panel p-4 rounded-xl border border-amber-900/40 bg-amber-950/10">
             <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">Partial</div>
-            <div className="text-2xl font-extrabold text-amber-400 mt-1">{stats.by_verdict['Partially Supported'] || 0}</div>
+            <div className="text-2xl font-semibold text-amber-400 mt-1">{stats.by_verdict['Partially Supported'] || 0}</div>
           </div>
           <div className="glass-panel p-4 rounded-xl border border-slate-800">
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Unsupported</div>
-            <div className="text-2xl font-extrabold text-slate-300 mt-1">{stats.by_verdict.Unsupported || 0}</div>
+            <div className="text-2xl font-semibold text-gray-700 mt-1">{stats.by_verdict.Unsupported || 0}</div>
           </div>
           <div className="glass-panel p-4 rounded-xl border border-rose-900/40 bg-rose-950/10">
             <div className="text-[11px] font-bold text-rose-400 uppercase tracking-wider">Contradicted</div>
-            <div className="text-2xl font-extrabold text-rose-400 mt-1">{stats.by_verdict.Contradicted || 0}</div>
+            <div className="text-2xl font-semibold text-rose-400 mt-1">{stats.by_verdict.Contradicted || 0}</div>
           </div>
         </div>
       )}
@@ -160,7 +160,7 @@ export default function ProvenanceLogTable() {
               <tbody className="divide-y divide-slate-800/60 font-sans">
                 {logs.map((row) => (
                   <tr key={row.claim_id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="p-3.5 font-medium text-white max-w-xs truncate" title={row.claim_text}>
+                    <td className="p-3.5 font-medium text-gray-900 max-w-xs truncate" title={row.claim_text}>
                       {row.claim_text}
                     </td>
                     <td className="p-3.5 shrink-0">

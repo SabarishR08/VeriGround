@@ -6,7 +6,7 @@ import {
   XCircle,
   ChevronDown,
   ChevronUp,
-  Sparkles,
+  
   RefreshCw,
   PieChart as PieIcon,
   ShieldCheck
@@ -41,7 +41,7 @@ export default function ResultsDashboard({
     switch (verdict) {
       case 'Supported':
         return (
-          <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-md bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 text-xs font-bold shadow-glow-emerald">
+          <span className="inline-flex items-center space-x-1 px-3 py-1 rounded-md bg-emerald-50 text-success border border-success/20 text-xs font-semibold">
             <CheckCircle2 className="w-3.5 h-3.5" />
             <span>Supported</span>
           </span>
@@ -80,29 +80,29 @@ export default function ResultsDashboard({
         <div className="md:col-span-8 space-y-4">
           <div className="flex items-center space-x-2">
             <ShieldCheck className="w-6 h-6 text-cyan-400" />
-            <h2 className="text-xl font-extrabold text-white">Verification Telemetry Summary</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Verification Telemetry Summary</h2>
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
               <div className="text-[10px] font-bold text-slate-400 uppercase">Analyzed Claims</div>
-              <div className="text-xl font-extrabold text-white mt-1">{totalClaims}</div>
+              <div className="text-xl font-semibold text-gray-900 mt-1">{totalClaims}</div>
             </div>
             <div className="p-3 rounded-xl bg-emerald-950/20 border border-emerald-900/40">
               <div className="text-[10px] font-bold text-emerald-400 uppercase">Supported</div>
-              <div className="text-xl font-extrabold text-emerald-400 mt-1">{countSupported}</div>
+              <div className="text-xl font-semibold text-emerald-400 mt-1">{countSupported}</div>
             </div>
             <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-900/40">
               <div className="text-[10px] font-bold text-amber-400 uppercase">Partial</div>
-              <div className="text-xl font-extrabold text-amber-400 mt-1">{countPartial}</div>
+              <div className="text-xl font-semibold text-amber-400 mt-1">{countPartial}</div>
             </div>
             <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
               <div className="text-[10px] font-bold text-slate-400 uppercase">Unsupported</div>
-              <div className="text-xl font-extrabold text-slate-300 mt-1">{countUnsupported}</div>
+              <div className="text-xl font-semibold text-gray-700 mt-1">{countUnsupported}</div>
             </div>
             <div className="p-3 rounded-xl bg-rose-950/20 border border-rose-900/40">
               <div className="text-[10px] font-bold text-rose-400 uppercase">Contradicted</div>
-              <div className="text-xl font-extrabold text-rose-400 mt-1">{countContradicted}</div>
+              <div className="text-xl font-semibold text-rose-400 mt-1">{countContradicted}</div>
             </div>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function ResultsDashboard({
                     </span>
                     {getVerdictBadge(item.verdict)}
                   </div>
-                  <h3 className="text-sm font-bold text-white leading-relaxed">
+                  <h3 className="text-sm font-semibold text-gray-900 leading-relaxed">
                     "{item.claim}"
                   </h3>
                 </div>
@@ -177,7 +177,7 @@ export default function ResultsDashboard({
                 <div className="flex items-center space-x-4 shrink-0">
                   <div className="text-right">
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Fused Score</div>
-                    <div className="text-lg font-mono font-extrabold text-cyan-400">
+                    <div className="text-lg font-mono font-semibold text-primary">
                       {item.fused_score !== undefined ? item.fused_score.toFixed(4) : '0.0000'}
                     </div>
                   </div>
@@ -202,7 +202,6 @@ export default function ResultsDashboard({
                   <div className="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800 space-y-1">
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1">
-                        <Sparkles className="w-3 h-3 text-cyan-400" />
                         <span>XAI Justification ({expInfo.model || 'qwen2:1.5b'})</span>
                       </span>
                       <span className="text-[10px] font-mono text-slate-500">
