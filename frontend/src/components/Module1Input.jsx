@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Upload, Globe, CheckCircle2, Sparkles, Trash2, ArrowRight, Loader2, FileCheck, Layers } from 'lucide-react';
+import { FileText, Upload, Globe, CheckCircle2, Trash2, ArrowRight, Loader2, FileCheck, Layers } from 'lucide-react';
 import { parseUploadedFile, fetchUrlContent } from '../services/api';
 
 export default function Module1Input({ 
@@ -55,14 +55,13 @@ export default function Module1Input({
     <div className="w-full max-w-7xl mx-auto space-y-8 animate-fadeIn">
       
       {/* Title Header Card */}
-      <div className="text-center py-6 glass-panel rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
-        <div className="absolute -right-16 -top-16 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl"></div>
+      <div className="text-center py-6 rounded-2xl border border-gray-200 bg-white shadow-sm relative overflow-hidden">
+        
 
         <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-2">
           Module 1
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
           AI Content Input Module
         </h2>
         <p className="text-slate-400 text-sm max-w-2xl mx-auto mt-2">
@@ -73,7 +72,7 @@ export default function Module1Input({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         {/* Left Column: Input Source Controls */}
-        <div className="lg:col-span-7 glass-panel rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+        <div className="lg:col-span-7 rounded-2xl p-6 border border-gray-100 bg-white shadow-sm space-y-6">
           
           {/* Radio Source Selector */}
           <div>
@@ -87,8 +86,8 @@ export default function Module1Input({
                 onClick={() => setInputSource('paste')}
                 className={`flex items-center justify-center space-x-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
                   inputSource === 'paste'
-                    ? 'bg-cyan-500/15 border-cyan-500 text-cyan-300 shadow-glow-cyan'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-gray-50 border border-gray-100 text-gray-600 hover:border-gray-200'
                 }`}
               >
                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${inputSource === 'paste' ? 'border-cyan-400 bg-cyan-500/20' : 'border-slate-600'}`}>
@@ -103,8 +102,8 @@ export default function Module1Input({
                 onClick={() => setInputSource('upload')}
                 className={`flex items-center justify-center space-x-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
                   inputSource === 'upload'
-                    ? 'bg-cyan-500/15 border-cyan-500 text-cyan-300 shadow-glow-cyan'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-gray-50 border border-gray-100 text-gray-600 hover:border-gray-200'
                 }`}
               >
                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${inputSource === 'upload' ? 'border-cyan-400 bg-cyan-500/20' : 'border-slate-600'}`}>
@@ -119,8 +118,8 @@ export default function Module1Input({
                 onClick={() => setInputSource('url')}
                 className={`flex items-center justify-center space-x-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
                   inputSource === 'url'
-                    ? 'bg-cyan-500/15 border-cyan-500 text-cyan-300 shadow-glow-cyan'
-                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'bg-gray-50 border border-gray-100 text-gray-600 hover:border-gray-200'
                 }`}
               >
                 <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${inputSource === 'url' ? 'border-cyan-400 bg-cyan-500/20' : 'border-slate-600'}`}>
@@ -156,7 +155,7 @@ export default function Module1Input({
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Artificial Intelligence was invented in 1955 by John McCarthy... Paste response from ChatGPT, Gemini, Claude, etc."
                 rows={9}
-                className="w-full bg-[#0B1120] border border-slate-800 rounded-xl p-4 text-slate-200 placeholder-slate-600 font-mono text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all resize-none shadow-inner"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl p-4 text-gray-800 placeholder-gray-400 font-mono text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none"
               />
             </div>
           )}
@@ -252,7 +251,7 @@ export default function Module1Input({
               type="button"
               onClick={() => onPreprocess(inputSource)}
               disabled={isLoading || !inputText.trim()}
-              className="flex-1 flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-extrabold text-sm shadow-glow-cyan disabled:opacity-50 transition-all cursor-pointer"
+              className="flex-1 flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-primary text-white font-semibold text-sm shadow-sm disabled:opacity-50 transition-all cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -261,7 +260,6 @@ export default function Module1Input({
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
                   <span>[ Preprocess Text ]</span>
                 </>
               )}
@@ -282,7 +280,7 @@ export default function Module1Input({
         {/* Right Column: Preprocess Results Card */}
         <div className="lg:col-span-5">
           {preprocessResult ? (
-            <div className="glass-panel rounded-2xl p-6 border border-emerald-500/40 shadow-glow-emerald space-y-6 relative overflow-hidden animate-fadeIn">
+            <div className="rounded-2xl p-6 border border-gray-100 bg-white shadow-sm space-y-6 relative overflow-hidden">
               
               {/* Success Badge */}
               <div className="flex items-center space-x-3 pb-4 border-b border-slate-800">
@@ -300,38 +298,38 @@ export default function Module1Input({
               {/* Statistics Grid matching exact specification */}
               <div className="grid grid-cols-2 gap-4">
                 
-                <div className="p-3.5 rounded-xl bg-[#0B1120] border border-slate-800/80 space-y-1">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
                     Source
                   </span>
-                  <span className="text-sm font-extrabold text-cyan-400 font-mono">
+                  <span className="text-sm font-semibold text-primary font-mono">
                     {preprocessResult.source}
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#0B1120] border border-slate-800/80 space-y-1">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
                     Characters
                   </span>
-                  <span className="text-base font-extrabold text-white font-mono">
+                  <span className="text-base font-semibold text-gray-900 font-mono">
                     {preprocessResult.characters}
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#0B1120] border border-slate-800/80 space-y-1">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
                     Sentences
                   </span>
-                  <span className="text-base font-extrabold text-white font-mono">
+                  <span className="text-base font-semibold text-gray-900 font-mono">
                     {preprocessResult.sentences_count}
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-[#0B1120] border border-slate-800/80 space-y-1">
-                  <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
                     Words
                   </span>
-                  <span className="text-base font-extrabold text-white font-mono">
+                  <span className="text-base font-semibold text-gray-900 font-mono">
                     {preprocessResult.words}
                   </span>
                 </div>
@@ -345,11 +343,11 @@ export default function Module1Input({
                   </span>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-1">
-                  <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider block">
+                <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100 space-y-1">
+                  <span className="text-xs font-semibold text-gray-600 uppercase tracking-wider block">
                     Status
                   </span>
-                  <span className="text-xs font-bold text-emerald-300 block truncate">
+                  <span className="text-xs font-semibold text-success block truncate">
                     Ready for Claim Extraction
                   </span>
                 </div>
@@ -376,7 +374,7 @@ export default function Module1Input({
               <button
                 type="button"
                 onClick={onContinueToModule2}
-                className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-sm shadow-glow-emerald transition-all cursor-pointer"
+                className="w-full flex items-center justify-center space-x-2 py-3.5 rounded-xl bg-success text-white font-semibold text-sm shadow-sm transition-all cursor-pointer"
               >
                 <span>[ Continue → ]</span>
                 <ArrowRight className="w-4 h-4" />

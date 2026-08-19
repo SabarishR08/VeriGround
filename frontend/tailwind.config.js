@@ -7,24 +7,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        bgDark: '#080C14',
-        cardDark: '#0F172A',
-        cardBorder: '#1E293B',
-        accentCyan: '#06B6D4',
-        accentEmerald: '#10B981',
-        accentViolet: '#8B5CF6',
-        accentRose: '#F43F5E',
-        glowCyan: 'rgba(6, 182, 212, 0.15)',
-        glowEmerald: 'rgba(16, 185, 129, 0.15)',
+        primary: {
+          DEFAULT: '#2563EB',
+          dark: '#1D4ED8'
+        },
+        neutral: {
+          50: '#FAFAFA',
+          100: '#F3F4F6',
+          200: '#E5E7EB',
+          300: '#D1D5DB',
+          400: '#9CA3AF',
+          700: '#374151'
+        },
+        success: '#10B981',
+        warning: '#F59E0B',
+        danger: '#F43F5E'
       },
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['Fira Code', 'JetBrains Mono', 'monospace'],
       },
       boxShadow: {
-        'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.3)',
-        'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.3)',
-        'glow-violet': '0 0 25px -5px rgba(139, 92, 246, 0.3)',
+        'sm-flat': '0 1px 4px rgba(2,6,23,0.04)',
       }
     },
   },
