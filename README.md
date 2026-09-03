@@ -1,4 +1,56 @@
-# VeriGround: Claim Verification & Provenance Auditing Framework for RAG Systems
+# VeriGround
+
+![License](https://img.shields.io/badge/license-MIT-green) ![Language](https://img.shields.io/badge/language-Python-informational)
+
+
+## 📌 Overview
+
+VeriGround — claim verification and provenance auditing framework for RAG systems: grounding checks, citation tracing, and hallucination guardrails
+
+## 🏗️ Architecture
+
+```text
+Browser / UI
+     │   HTTP
+     ▼
+Flask app
+```
+
+## 🧰 Tech Stack
+
+- **Language:** Python
+- **Backend:** Flask
+- **Frontend:** Web frontend (frontend) · React
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10+
+
+### 1. Clone
+
+```bash
+git clone https://github.com/SabarishR08/VeriGround.git
+cd VeriGround
+```
+
+### 2. Install dependencies
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 4. Run
+
+```bash
+python backend/app.py
+```
+
+
+---
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
@@ -301,3 +353,9 @@ Prepared for Technical Seminar / Project Review, Department of Computer Science 
 Developed by **Team Mutex** (Rohith V K, Shafeeq S, Sabarish J, Sabarish R, Srikesh R, Vignesh R).
 
 Released under the [MIT License](LICENSE).
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) — © 2026 Sabarish R.
