@@ -3,11 +3,11 @@
 ![License](https://img.shields.io/badge/license-MIT-green) ![Language](https://img.shields.io/badge/language-Python-informational)
 
 
-## 📌 Overview
+## Overview
 
 VeriGround — claim verification and provenance auditing framework for RAG systems: grounding checks, citation tracing, and hallucination guardrails
 
-## 🏗️ Architecture
+## Architecture
 
 ```text
 Browser / UI
@@ -16,13 +16,13 @@ Browser / UI
 Flask app
 ```
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Language:** Python
 - **Backend:** Flask
 - **Frontend:** Web frontend (frontend) · React
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -67,7 +67,7 @@ python backend/app.py
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
@@ -134,7 +134,7 @@ flowchart TD
 
 ---
 
-## 🔀 Verification & Data Flow Sequence
+## Verification & Data Flow Sequence
 
 ```mermaid
 sequenceDiagram
@@ -178,7 +178,7 @@ sequenceDiagram
 
 ---
 
-## ⚡ Mathematical Fusion Model
+## Mathematical Fusion Model
 
 VeriGround uses a novel **Weighted Evidence-Fusion Verification Formula** combining semantic, probabilistic NLI, and entity overlap signals:
 
@@ -192,15 +192,15 @@ $$\text{Verification Score} = \alpha \cdot \text{SemSim} + \beta \cdot P(\text{e
 
 ---
 
-## 📊 4-Way Decision Thresholding
+## 4-Way Decision Thresholding
 
 | Verdict Category | Fused Score Band / Condition | Description |
 | :--- | :--- | :--- |
 <<<<<<< HEAD
-| **Supported** 🟢 | $\text{Fused Score} \ge 0.70$ | Evidence strongly entails all atomic facts in the claim. |
-| **Partially Supported** 🟡 | $0.40 \le \text{Fused Score} < 0.70$ | Claim is directionally correct, but evidence omits specific details/entities. |
-| **Unsupported** ⚪ | $0.10 \le \text{Fused Score} < 0.40$ or $\text{SemSim} < 0.15$ | Evidence is off-topic or neutral regarding the claim. |
-| **Contradicted** 🔴 | $\text{Fused Score} < 0.10$ or $P(\text{contradict}) > 0.60$ | Evidence explicitly negates the assertions in the claim. |
+| **Supported** | $\text{Fused Score} \ge 0.70$ | Evidence strongly entails all atomic facts in the claim. |
+| **Partially Supported** | $0.40 \le \text{Fused Score} < 0.70$ | Claim is directionally correct, but evidence omits specific details/entities. |
+| **Unsupported** | $0.10 \le \text{Fused Score} < 0.40$ or $\text{SemSim} < 0.15$ | Evidence is off-topic or neutral regarding the claim. |
+| **Contradicted** | $\text{Fused Score} < 0.10$ or $P(\text{contradict}) > 0.60$ | Evidence explicitly negates the assertions in the claim. |
 =======
 | **Supported** | $\text{Fused Score} \ge 0.70$ | Evidence strongly entails all atomic facts in the claim. |
 | **Partially Supported** | $0.40 \le \text{Fused Score} < 0.70$ | Claim is directionally correct, but evidence omits specific details/entities. |
@@ -210,7 +210,7 @@ $$\text{Verification Score} = \alpha \cdot \text{SemSim} + \beta \cdot P(\text{e
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 <<<<<<< HEAD
 1. **Atomic Claim Extraction & Coreference Resolution**: Rule-based sentence segmentation with spaCy fallback to split complex LLM answers into single, testable factual propositions with subject restoration for pronouns (`it`, `he`, `she`).
@@ -228,7 +228,7 @@ $$\text{Verification Score} = \alpha \cdot \text{SemSim} + \beta \cdot P(\text{e
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 VeriGround/
@@ -268,7 +268,7 @@ VeriGround/
 
 ---
 
-## 🛠️ Quick Start & Installation
+## Quick Start & Installation
 
 ### 1. Prerequisites
 - **Python**: 3.10+
@@ -322,7 +322,7 @@ npm run dev
 
 ---
 
-## 🧪 Verification & Output Demonstration
+## Verification & Output Demonstration
 
 ### Module 3 — Evidence Retrieval Test Output
 ```
@@ -339,23 +339,23 @@ CLAIM : Water boils at 100 degrees Celsius at standard atmospheric pressure.
 
 ### Module 4 — Verdict Classification Output
 ```
-[Case 1/4]  ✅ Supported      | Fused Score: 0.8039 (SemSim: 0.82, P_entail: 0.9977, Overlap: 1.00)
-[Case 2/4]  🟡 Partial        | Fused Score: 0.6373 (SemSim: 0.76, P_entail: 0.9939, Overlap: 0.00)
-[Case 3/4]  ⬜ Unsupported    | Fused Score: 0.0076 (Off-Topic Gate Triggered: SemSim < 0.15)
-[Case 4/4]  ❌ Contradicted   | Fused Score: 0.0000 (Contradiction Dominance Triggered: P_contradict > 0.60)
+[Case 1/4]   Supported      | Fused Score: 0.8039 (SemSim: 0.82, P_entail: 0.9977, Overlap: 1.00)
+[Case 2/4]   Partial        | Fused Score: 0.6373 (SemSim: 0.76, P_entail: 0.9939, Overlap: 0.00)
+[Case 3/4]   Unsupported    | Fused Score: 0.0076 (Off-Topic Gate Triggered: SemSim < 0.15)
+[Case 4/4]   Contradicted   | Fused Score: 0.0000 (Contradiction Dominance Triggered: P_contradict > 0.60)
 ```
 
 ---
 
-## 📜 License & Acknowledgments
+## License & Acknowledgments
 
-Prepared for Technical Seminar / Project Review, Department of Computer Science and Business Systems, Panimalar Engineering College.  
+Prepared for Technical Seminar / Project Review, Department of Computer Science and Business Systems, Panimalar Engineering College.
 Developed by **Team Mutex** (Rohith V K, Shafeeq S, Sabarish J, Sabarish R, Srikesh R, Vignesh R).
 
 Released under the [MIT License](LICENSE).
 
 ---
 
-## 📄 License
+## License
 
 [MIT](LICENSE) — © 2026 Sabarish R.
