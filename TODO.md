@@ -31,3 +31,14 @@
 - [ ] Add a dataclass VerificationResult replacing plain dict returns from nli_verification
 - [ ] Add a dataclass EvidenceItem replacing plain dict returns from evidence_retrieval
 - [ ] Add a CLI entry point in backend/ that accepts a claim string and prints the verdict
+
+
+<!-- backlog top-up 2026-09-19 (file-verified) -->
+- [ ] Add a module-level docstring to backend/file_parser.py describing the supported input formats
+- [ ] Add a module-level docstring to backend/provenance_store.py describing the provenance data model
+- [ ] Add type hints to all function signatures in backend/nlp_engine.py
+- [ ] Add type hints to all function signatures in backend/file_parser.py
+- [ ] Add a module-level docstring to backend/nlp_engine.py describing its preprocessing responsibilities
+- [ ] Extract hardcoded model names and score thresholds in backend/nli_verification.py into module-level constants
+- [ ] Add a module-level docstring to api/index.py describing the serverless entry point
+- [ ] Add type hints to all function signatures in backend/explanation_generation.py
