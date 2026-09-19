@@ -320,7 +320,6 @@ def verify_claims_route():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-<<<<<<< HEAD
 @app.route('/api/retrieve-evidence', methods=['POST'])
 def retrieve_evidence_route():
     """
@@ -403,11 +402,9 @@ def retrieve_evidence_route():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-=======
 # ─────────────────────────────────────────────────────────────────────────────
 # Module 5: Explanation Generation  (+ Module 6 provenance update)
 # ─────────────────────────────────────────────────────────────────────────────
->>>>>>> origin/main
 
 @app.route('/api/explain-claim', methods=['POST'])
 def explain_claim_route():
