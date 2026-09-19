@@ -56,3 +56,8 @@
 - [ ] Add type hints to all function signatures in backend/app.py
 - [ ] Add input validation in backend/file_parser.py rejecting unsupported file extensions with a clear error
 - [ ] Extract hardcoded prompts in backend/explanation_generation.py into module-level constants
+
+
+<!-- backlog top-up 2026-09-19 batch 2b (file+verb deduped) -->
+- [ ] Add error handling with logging around storage operations in backend/provenance_store.py
+- [ ] Add error handling with logging around text preprocessing in backend/nlp_engine.py
