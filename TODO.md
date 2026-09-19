@@ -4,7 +4,7 @@
 - [ ] Add module-level docstrings to backend/nli_verification.py describing its purpose and usage
 - [ ] Add type hints to all functions in backend/evidence_retrieval.py
 - [ ] Add type hints to all functions in backend/explanation_generation.py
-- [ ] Add a __version__ = "0.1.0" to backend/__init__.py if it exists, else create it
+- [ ] Create backend/__init__.py exporting __version__ = "0.1.0"
 - [ ] Add logging.getLogger(__name__) to backend/app.py replacing bare print() calls
 - [ ] Add input validation in backend/app.py: reject claims shorter than 3 words with HTTP 400
 - [ ] Add a /health endpoint to backend/app.py returning {"status": "ok"}
@@ -42,3 +42,17 @@
 - [ ] Extract hardcoded model names and score thresholds in backend/nli_verification.py into module-level constants
 - [ ] Add a module-level docstring to api/index.py describing the serverless entry point
 - [ ] Add type hints to all function signatures in backend/explanation_generation.py
+
+
+<!-- backlog top-up 2026-09-19 batch 2 (file+verb deduped) -->
+- [ ] Add a module-level docstring to backend/evidence_retrieval.py describing the retrieval pipeline
+- [ ] Add a module-level docstring to backend/explanation_generation.py describing the explanation flow
+- [ ] Add a module-level docstring to backend/app.py describing the Flask application setup
+- [ ] Add type hints to all function signatures in backend/provenance_store.py
+- [ ] Add type hints to all function signatures in backend/nli_verification.py
+- [ ] Add a module-level docstring to frontend/src/services/api.js describing the API client
+- [ ] Extract hardcoded API base URLs in frontend/src/services/api.js into a single constant
+- [ ] Add error handling with logging around file parsing in backend/file_parser.py
+- [ ] Add type hints to all function signatures in backend/app.py
+- [ ] Add input validation in backend/file_parser.py rejecting unsupported file extensions with a clear error
+- [ ] Extract hardcoded prompts in backend/explanation_generation.py into module-level constants
