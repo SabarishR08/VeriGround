@@ -1,6 +1,7 @@
 # VeriGround â€” daily improvement backlog
 # Fact-verification / NLI platform (Python backend + React/Vite frontend)
 
+- [ ] Create a smoke-test CI workflow at .github/workflows/ci.yml that runs python -m compileall on backend/ to catch syntax errors on every push and pull_request (dependency-free; do not install heavy ML requirements in CI)
 - [ ] Add module-level docstrings to backend/nli_verification.py describing its purpose and usage
 - [ ] Add type hints to all functions in backend/evidence_retrieval.py
 - [ ] Add type hints to all functions in backend/explanation_generation.py
