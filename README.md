@@ -347,15 +347,6 @@ CLAIM : Water boils at 100 degrees Celsius at standard atmospheric pressure.
 
 ---
 
-## License & Acknowledgments
-
-Prepared for Technical Seminar / Project Review, Department of Computer Science and Business Systems, Panimalar Engineering College.
-Developed by **Team Mutex** (Rohith V K, Shafeeq S, Sabarish J, Sabarish R, Srikesh R, Vignesh R).
-
-Released under the [MIT License](LICENSE).
-
----
-
 ## License
 
 [MIT](LICENSE) — © 2026 Sabarish R.
