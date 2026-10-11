@@ -5,7 +5,7 @@
 - [ ] Add module-level docstrings to backend/nli_verification.py describing its purpose and usage
 - [ ] Add type hints to all functions in backend/evidence_retrieval.py
 - [ ] Add type hints to all functions in backend/explanation_generation.py
-- [ ] Create backend/__init__.py exporting __version__ = "0.1.0"
+- [x] Create backend/__init__.py exporting __version__ = "0.1.0"
 - [ ] Add logging.getLogger(__name__) to backend/app.py replacing bare print() calls
 - [ ] Add input validation in backend/app.py: reject claims shorter than 3 words with HTTP 400
 - [ ] Add a /health endpoint to backend/app.py returning {"status": "ok"}
