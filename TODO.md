@@ -9,7 +9,7 @@
 - [ ] Add logging.getLogger(__name__) to backend/app.py replacing bare print() calls
 - [ ] Add input validation in backend/app.py: reject claims shorter than 3 words with HTTP 400
 - [ ] Add a /health endpoint to backend/app.py returning {"status": "ok"}
-- [ ] Add a constants.py in backend/ for model names and threshold values used across modules
+- [x] Add a constants.py in backend/ for model names and threshold values used across modules
 - [ ] Add try/except with logging around the NLI model inference call in nli_verification.py
 - [ ] Add a truncate_text(text, max_tokens=512) helper in backend/nlp_engine.py
 - [ ] Add a confidence_label() helper that maps float score to "HIGH"/"MEDIUM"/"LOW"
